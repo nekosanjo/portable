@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f9f5ee">
+  <title>portable｜WEB謎解き</title>
+  <style>
+    @font-face {
+      font-family: "GenEiMGothic2";
+      src: local("GenEi M Gothic v2 Bold"),
+           local("源暎エムゴv2 Bold"),
+           url("fonts/GenEiMGothic2-Bold.ttf") format("truetype");
+      font-style: normal;
+      font-weight: 700;
+      font-display: swap;
+    }
+
+    :root {
+      --paper: #f9f5ee;
+      --ink: #2f3949;
+      --teal: #51928b;
+      --coral: #e06353;
+      --gold: #9a671a;
+      --muted: #6a726f;
+      --answer-panel-width: 780px;
+    }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+
+    body {
+      margin: 0;
+      padding-right: 76px;
+      /* 画像の追加時に、ブラウザーが入力欄を追って本文を動かすのを防ぎます。 */
+      overflow-anchor: none;
+      color: var(--ink);
+      background: var(--paper);
+      font-family: "GenEiMGothic2", "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      font-weight: 700;
+      font-synthesis: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input { font: inherit; }
+
+    /* 右側に問題への近道を固定し、本文と重ならない余白を確保します。 */
+    .question-jump {
+      position: fixed;
+      z-index: 30;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      width: 56px;
+      max-height: calc(100vh - 32px);
+      max-height: calc(100dvh - 32px);
+      padding: 7px 5px;
+      border: 2px solid var(--ink);
+      border-radius: 10px;
+      background: var(--paper);
+      box-shadow: 2px 3px 0 #2f39491a;
+    }
+
+    .question-jump-title {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .question-jump-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-height: 0;
+      margin: 0;
+      padding: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      scrollbar-width: thin;
+      list-style: none;
+    }
+
+    .question-jump-list li { flex-shrink: 0; }
+
+    .question-jump-link {
+      display: grid;
+      place-items: center;
+      min-height: 30px;
+      padding: 4px 1px;
+      border: 1px solid #b7c3bb;
+      border-radius: 5px;
+      color: var(--ink);
+      background: #fffdf9;
+      font-size: 16px;
+      line-height: 1.3;
+      text-decoration: none;
+      touch-action: manipulation;
+    }
+
+    .question-jump-link[data-state="current"] { border: 2px solid var(--teal); }
+    .question-jump-link[aria-current="location"] { color: #fffdf9; background: var(--teal); border-color: var(--teal); }
+    .question-jump-link:hover { color: var(--ink); background: #e7efea; }
+    .question-jump-link:focus-visible { outline: 2px solid var(--coral); outline-offset: -3px; }
+    .portable-return-all { flex-shrink: 0; width: 100%; min-height: 40px; padding: 6px 1px; border: 1px solid var(--ink); border-radius: 5px; color: #fffdf9; background: var(--teal); font-size: 16px; line-height: 1.3; cursor: pointer; touch-action: manipulation; }
+    .portable-return-all:hover { color: var(--ink); background: #e7efea; }
+    .portable-return-all:focus-visible { outline: 2px solid var(--coral); outline-offset: -3px; }
+    .question-card, .clear-screen { scroll-margin-top: 16px; }
+
+    .site-header {
+      border-top: 8px solid var(--ink);
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .header-inner, .page-shell, .page-footer {
+      width: min(1040px, calc(100% - 48px));
+      margin-inline: auto;
+    }
+
+    .header-inner {
+      min-height: 86px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: .12em;
+    }
+
+    /* タイトル画像のロゴ部分をそのまま表示し、丸い文字を揃えます。 */
+    .brand-logo {
+      display: block;
+      width: 166px;
+      aspect-ratio: 1120 / 268;
+      background-image: url("images/Title.png");
+      background-size: 171.428571% auto;
+      background-position: 50.625% 55.172414%;
+      background-repeat: no-repeat;
+      flex-shrink: 0;
+    }
+
+    .footer-logo { width: 92px; }
+
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 76px;
+      height: 44px;
+      background: var(--teal);
+      color: var(--paper);
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: 0;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .header-note {
+      margin: 0;
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: .08em;
+    }
+
+    .intro { padding: 32px 0 30px; }
+
+    .title-image {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .notice {
+      margin-bottom: 42px;
+      border: 2px solid var(--ink);
+      background: var(--paper);
+    }
+
+    .notice-title {
+      margin: 0;
+      padding: 16px 26px;
+      background: #e7efea;
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
+    .notice[open] > .notice-title { border-bottom: 2px solid var(--ink); }
+    .notice-title h2 { display: inline; margin: 0; font: inherit; }
+    .notice-title::marker { color: var(--teal); }
+    .notice-title:focus-visible { outline: 3px solid var(--coral); outline-offset: -4px; }
+
+    .notice-content { padding: 26px; }
+    .notice-block + .notice-block { margin-top: 28px; padding-top: 24px; border-top: 1px solid #c8c9c0; }
+    .notice-block h3 { margin: 0 0 12px; color: #386e66; font-size: 22px; line-height: 1.6; }
+    .notice-block p, .notice-block ul { margin: 0; font-size: 20px; line-height: 1.9; overflow-wrap: anywhere; }
+    .notice-block p + ul { margin-top: 12px; }
+    .notice-block p + p { margin-top: 12px; }
+    .notice-block ul { padding-left: 1.3em; }
+    .notice-block li + li { margin-top: 10px; }
+    .notice-block strong { color: var(--ink); }
+    .notice-details { margin-top: 20px; border-top: 1px solid #c8c9c0; }
+    .notice-details > summary { padding: 16px 0; color: #386e66; font-size: 22px; line-height: 1.6; cursor: pointer; }
+    .notice-details > summary::marker { color: var(--teal); }
+    .notice-details > summary:focus-visible { outline: 3px solid var(--coral); outline-offset: 4px; }
+    .notice-details-content { padding: 4px 0; }
+    .notice a, .page-footer a { color: #386e66; text-underline-offset: .2em; }
+    .notice a:hover, .page-footer a:hover { color: var(--ink); }
+
+    .intro p {
+      margin: 18px 0 0;
+      font-size: 18px;
+      line-height: 2;
+      letter-spacing: .04em;
+      text-align: center;
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .question-card {
+      margin: 0 0 42px;
+      border: 2px solid var(--ink);
+      background: var(--paper);
+    }
+
+    .question-header {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      min-height: 58px;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .question-heading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 148px;
+      margin: 0;
+      padding: 12px 25px;
+      border-right: 2px solid var(--ink);
+      color: var(--paper);
+      background: var(--teal);
+      font-size: 28px;
+      line-height: 1.5;
+      letter-spacing: .06em;
+      white-space: nowrap;
+    }
+
+    [data-kind="final"] .question-heading { background: var(--coral); }
+    [data-kind="extra"] .question-heading { background: var(--gold); }
+
+    .solved-state {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 22px;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: .07em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .solved-state { color: #386e66; }
+
+    .solved-state::before {
+      content: "✓";
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      color: var(--paper);
+      background: var(--coral);
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .question-image {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    #question-image { object-fit: contain; }
+
+    .portable-source { cursor: grab; user-select: none; -webkit-user-drag: none; touch-action: pan-y pinch-zoom; }
+    .portable-source:focus-visible { outline: 3px solid var(--teal); outline-offset: -4px; }
+    .portable-images { position: fixed; inset: 0; z-index: 20; pointer-events: none; }
+    .portable-card { position: absolute; width: 280px; max-width: calc(100vw - 24px); border: 2px solid var(--ink); background: var(--paper); box-shadow: 4px 6px 0 #2f394933; pointer-events: auto; cursor: grab; user-select: none; touch-action: none; }
+    .portable-card:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+    .portable-card-image { display: block; width: 100%; height: auto; max-height: min(360px, calc(100dvh - 24px)); object-fit: contain; -webkit-user-drag: none; }
+    .is-portable-dragging, .is-portable-dragging * { cursor: grabbing !important; user-select: none !important; }
+
+    .answer-form {
+      padding: 18px 30px 20px;
+      border-top: 2px solid var(--ink);
+    }
+
+    .image-keyboard {
+      position: relative;
+      width: 100%;
+      max-width: var(--answer-panel-width);
+      aspect-ratio: 868 / 363;
+      margin: 0 auto;
+      background: var(--paper);
+      --panel-key-font: 36px;
+      --panel-control-font: 20px;
+      --panel-input-font: 30px;
+      --panel-radius: 10px;
+    }
+
+    .panel-background {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      pointer-events: none;
+    }
+
+    #answer {
+      position: absolute;
+      z-index: 2;
+      left: 1.958525%;
+      top: 4.683196%;
+      width: 95.967742%;
+      height: 14.876033%;
+      min-width: 0;
+      padding: 0 1.3%;
+      border: 2px solid var(--ink);
+      border-radius: var(--panel-radius);
+      outline: none;
+      color: var(--ink);
+      background: #fffdf9;
+      caret-color: var(--teal);
+      font-family: inherit;
+      font-size: var(--panel-input-font);
+      appearance: none;
+    }
+
+    #answer::placeholder { color: #82877e; }
+    #answer:focus { border-color: var(--teal); box-shadow: inset 0 0 0 1px var(--teal); }
+    #answer[aria-invalid="true"] { border-color: var(--coral); }
+
+    .panel-keys { position: absolute; inset: 0; pointer-events: none; }
+
+    .panel-key {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 1px solid var(--ink);
+      border-radius: var(--panel-radius);
+      color: var(--ink);
+      background: #fffdf9;
+      font: inherit;
+      font-size: var(--panel-key-font);
+      font-weight: 700;
+      line-height: 1;
+      text-align: center;
+      cursor: pointer;
+      pointer-events: auto;
+      touch-action: manipulation;
+      user-select: none;
+    }
+
+    button.panel-key:hover { background: #e7efea; }
+    button.panel-key:active { background: #cdded7; }
+    .panel-key:focus-visible { outline: 2px solid var(--teal); outline-offset: -3px; }
+    .panel-control { font-size: var(--panel-control-font); }
+    .panel-kana {
+      border-color: var(--teal);
+      color: var(--teal);
+      background: #e7efea;
+      font-size: var(--panel-key-font);
+      cursor: default;
+      pointer-events: none;
+    }
+    .panel-delete { color: #a63f35; border-color: var(--coral); background: #f9e9e2; }
+    button.panel-delete:hover { background: #f1d4c9; }
+    .panel-enter {
+      color: #fffdf9;
+      border-color: var(--teal);
+      background: var(--teal);
+      font-size: var(--panel-key-font);
+    }
+    button.panel-enter:hover { background: #417b75; }
+    button.panel-enter:active { background: #346760; }
+    .panel-enter:focus-visible { outline-color: var(--paper); }
+    .panel-symbol { display: block; font-size: 1.4em; line-height: 1; }
+    .panel-return-icon { display: block; width: 1em; height: 1em; margin: 0 auto; }
+    .panel-control-word { display: block; font-size: .7em; line-height: 1.2; }
+    .keyboard-help { max-width: var(--answer-panel-width); margin: 12px auto 0; color: var(--muted); font-size: 17px; line-height: 1.8; text-wrap: balance; }
+
+    .answer-result {
+      max-width: var(--answer-panel-width);
+      min-height: 20px;
+      margin: 11px auto 0;
+      color: #a63f35;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+
+
+    .inline-hints {
+      padding: 22px 30px 30px;
+      border-top: 1px solid #c8c9c0;
+    }
+
+    .inline-hints h3 { margin: 0 0 16px; font-size: 18px; }
+
+    .inline-hint-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      align-items: start;
+      gap: 16px;
+    }
+
+    .inline-hint {
+      min-width: 0;
+      border: 2px solid var(--ink);
+    }
+
+    .inline-hint summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 54px;
+      padding: 14px 18px;
+      color: #0767ef;
+      font-size: 18px;
+      line-height: 1.6;
+      list-style: none;
+      cursor: pointer;
+    }
+
+    .inline-hint summary span { text-wrap: balance; }
+
+    .inline-hint summary::-webkit-details-marker { display: none; }
+    .inline-hint summary::after { content: "＋"; font-size: 22px; line-height: 1; }
+    .inline-hint[open] summary::after { content: "−"; }
+    .inline-hint[open] summary { border-bottom: 2px solid var(--ink); background: #e7efea; }
+    .inline-hint summary:hover { background: #e7efea; }
+    .inline-hint summary:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+
+    .inline-hint-content { padding: 12px; }
+    .inline-hint-image {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 0;
+    }
+    .hint-error {
+      margin: 0;
+      padding: 30px 20px;
+      color: #a63f35;
+      font-size: 18px;
+      line-height: 1.8;
+      text-align: center;
+    }
+
+    .image-error {
+      margin: 0;
+      padding: 55px 24px;
+      font-size: 18px;
+      line-height: 1.8;
+      text-align: center;
+    }
+
+    .clear-screen {
+      margin-bottom: 42px;
+      border: 2px solid var(--ink);
+      text-align: center;
+    }
+
+    .clear-image {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    .clear-caption {
+      margin: 0;
+      padding: 20px 24px;
+      border-top: 2px solid var(--ink);
+      font-size: 28px;
+      line-height: 1.8;
+    }
+
+    .clear-actions {
+      display: flex;
+      justify-content: center;
+      padding: 0 24px 24px;
+    }
+
+    .clear-tweet {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      max-width: 100%;
+      min-height: 52px;
+      padding: 12px 22px;
+      border: 2px solid var(--ink);
+      border-radius: 8px;
+      color: var(--paper);
+      background: var(--ink);
+      font-size: 20px;
+      line-height: 1.5;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .clear-tweet:hover { background: #435366; }
+    .clear-tweet:focus-visible { outline: 3px solid var(--coral); outline-offset: 4px; }
+    .clear-tweet-label { display: block; flex: none; white-space: nowrap; }
+
+    .clear-extras { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; border-top: 2px solid var(--ink); text-align: left; }
+    .clear-extra { min-width: 0; }
+    .clear-extra + .clear-extra { border-left: 1px solid #c8c9c0; }
+    .clear-extra summary { padding: 16px 24px; color: #386e66; font-size: 24px; line-height: 1.5; cursor: pointer; }
+    .clear-extra summary::marker { color: var(--teal); }
+    .clear-extra summary:focus-visible { outline: 3px solid var(--coral); outline-offset: -4px; }
+    .clear-extra-image-link { display: block; max-width: 810px; margin: 0 auto; }
+    .clear-extra-image { display: block; width: 100%; height: auto; }
+
+    .progress-controls {
+      margin: 40px 0;
+      padding: 24px 16px;
+      border-top: 1px solid #c8c9c0;
+      text-align: center;
+    }
+
+    .progress-save-status { margin: 0 0 16px; font-size: 18px; line-height: 1.8; }
+    .progress-save-status[data-state="error"] { color: #a63f35; }
+
+    .restart-button, .dialog-button {
+      min-height: 48px;
+      max-width: 100%;
+      padding: 10px 20px;
+      border: 2px solid var(--ink);
+      border-radius: 6px;
+      color: var(--ink);
+      background: var(--paper);
+      font-size: 18px;
+      line-height: 1.5;
+      cursor: pointer;
+    }
+
+    .restart-button:hover, .dialog-button:hover { background: #e7efea; }
+    .restart-button:focus-visible, .dialog-button:focus-visible { outline: 3px solid var(--teal); outline-offset: 4px; }
+
+    .restart-dialog {
+      position: fixed;
+      inset: 0;
+      width: min(480px, calc(100% - 32px));
+      height: fit-content;
+      max-height: calc(100dvh - 32px);
+      margin: auto;
+      padding: 26px;
+      overflow-y: auto;
+      border: 2px solid var(--ink);
+      border-radius: 12px;
+      color: var(--ink);
+      background: var(--paper);
+      text-align: center;
+    }
+
+    .restart-dialog::backdrop { background: #2f394980; }
+    .restart-dialog h2 { margin: 0 0 16px; font-size: 24px; line-height: 1.5; }
+    .restart-dialog p { margin: 0 0 24px; font-size: 18px; line-height: 1.8; }
+    .dialog-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+    .dialog-reset { color: var(--paper); background: #a63f35; border-color: #a63f35; }
+    .dialog-reset:hover { background: #8f342c; }
+
+    .page-footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-top: 52px;
+      margin-bottom: 28px;
+      padding-top: 20px;
+      border-top: 1px solid #c8c9c0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.8;
+      letter-spacing: .06em;
+    }
+
+    .page-footer .footer-logo { margin-left: auto; }
+
+    @media (max-width: 600px) {
+      body { padding-right: 52px; }
+      .question-jump { right: 4px; width: 44px; padding: 6px 3px; gap: 6px; border-width: 1px; border-radius: 7px; }
+      .question-jump-title { font-size: 13px; }
+      .question-jump-link { min-height: 32px; font-size: 14px; }
+      .header-inner, .page-shell, .page-footer { width: calc(100% - 28px); }
+      .header-inner { min-height: 72px; }
+      .header-note { display: none; }
+      .brand { font-size: 13px; gap: 11px; }
+      .brand-mark { width: 68px; height: 38px; font-size: 18px; }
+      .intro { padding: 22px 0 24px; }
+      .intro p { margin-top: 15px; font-size: 17px; }
+      .notice-title { padding: 14px 16px; font-size: 24px; }
+      .notice-content { padding: 20px 16px; }
+      .notice-block h3 { font-size: 20px; }
+      .notice-block p, .notice-block ul { font-size: 18px; }
+      .notice-details > summary { font-size: 20px; }
+      .notice-block + .notice-block { margin-top: 24px; padding-top: 20px; }
+      .clear-caption { padding: 16px; font-size: 24px; }
+      .clear-actions { padding: 0 6px 18px; }
+      .clear-tweet { padding: 10px 8px; font-size: 18px; }
+      .clear-extra summary { min-height: calc(3em + 28px); padding: 14px 16px; font-size: 22px; }
+      .portable-card { width: 190px; }
+      .restart-dialog { padding: 20px; }
+      .progress-save-status { font-size: 17px; }
+      .question-header { min-height: 50px; }
+      .question-heading { min-width: 118px; padding: 10px; font-size: 24px; letter-spacing: .02em; }
+      .solved-state { padding-inline: 6px; gap: 8px; font-size: 22px; letter-spacing: .02em; }
+      .solved-state::before { width: 24px; height: 24px; font-size: 16px; }
+      .answer-form { padding: 20px 16px 14px; }
+      .inline-hints { padding: 20px 12px; }
+      .inline-hint-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .inline-hint summary { padding: 10px 4px; gap: 2px; font-size: 16px; }
+      .inline-hint summary::after { font-size: 18px; }
+      .inline-hint-content { padding: 6px; }
+      .keyboard-help { font-size: 16px; }
+      .question-card, .notice { margin-bottom: 28px; }
+      .page-footer { margin-top: 36px; font-size: 17px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .submit-button { transition: none; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="question-jump" aria-label="問題への移動と画像の操作">
+    <p class="question-jump-title">問題</p>
+    <ol id="question-jump-list" class="question-jump-list"></ol>
+    <button id="portable-return-all" class="portable-return-all" type="button" aria-label="持ち運び中の画像をすべて戻す" aria-controls="portable-images" title="持ち運び中の画像をすべて戻す" hidden>戻す</button>
+  </nav>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="brand">
+        <span class="brand-mark">Web謎</span>
+        <span class="brand-logo" role="img" aria-label="portable"></span>
+      </div>
+      <p class="header-note">ひらめきを、つなごう。</p>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <div class="intro">
+      <h1 class="visually-hidden">portable</h1>
+      <img class="title-image" src="images/Title.png"
+           alt="謎解きワールド portable｜作：ねこさんじょう">
+    </div>
+
+    <!-- 注意書きは画面の幅に合わせて読みやすく折り返すテキストで表示します。 -->
+    <details class="notice" aria-labelledby="notice-title">
+      <summary class="notice-title"><h2 id="notice-title">遊ぶ前に</h2></summary>
+      <div class="notice-content">
+        <div class="notice-block">
+          <p>VRChatで公開した謎解きのWeb版です。<strong>謎の内容は共通で、VRChatの知識は不要</strong>です。</p>
+          <ul>
+            <li><strong>無料・登録不要</strong>／目安1〜2時間（時間制限なし）</li>
+            <li>例題を含む<strong>全19問</strong>。最終問題で本編クリア、その先にEX問題があります。</li>
+            <li>答えは<strong>すべてひらがな</strong>で。英単語もひらがなに直し、選択問題は<strong>答えの言葉だけ</strong>を入力してください。</li>
+            <li><strong>ヒントは入力パネルの下</strong>、見返しは右側の問題番号から。</li>
+            <li><strong>正解画像はドラッグ（スマホはタップ）で小さくして持ち運べます。</strong>右側の「戻す」でまとめて戻せます。</li>
+            <li>スマートフォン・PC対応。1人でも、複数人で相談しながらでも遊べます。必要ならメモ用の紙とペンをご用意ください。</li>
+            <li><strong>虫眼鏡マーク</strong>がある問題は知識を使います。分からないときは検索をおすすめします。</li>
+            <li>正しい答えで進まない場合は、ページを再読み込みしてください。</li>
+          </ul>
+        </div>
+        <details class="notice-details">
+          <summary>保存・配信などの詳しい案内</summary>
+          <div class="notice-details-content">
+            <section class="notice-block" aria-labelledby="notice-save">
+              <h3 id="notice-save">進捗の保存</h3>
+              <p>進捗は<strong>この端末・ブラウザーに自動保存</strong>されます。別の端末等への引き継ぎはできず、サイトデータを削除すると進捗も消えます。遊び直す場合はページ下部の「はじめから解く」へ。</p>
+            </section>
+            <section class="notice-block" aria-labelledby="notice-sharing">
+              <h3 id="notice-sharing">配信・感想の投稿</h3>
+              <ul>
+                <li><strong>動画投稿・実況配信OK</strong>。タイトルや概要欄に「ネタバレあり」と明記してください。</li>
+                <li>SNSでは、問題・解答・ヒントの画像や、答え・解法が分かる投稿はお控えください。<strong>タイトル・本編クリア・EXクリア画像は投稿OK</strong>です。</li>
+                <li>感想やクリア報告は<a href="https://x.com/hashtag/nazo_ptbl" target="_blank" rel="noopener noreferrer">#nazo_ptbl</a>でどうぞ。</li>
+              </ul>
+            </section>
+          </div>
+        </details>
+      </div>
+    </details>
+
+    <!-- 正解済みの画像が、ここに順番に並びます。 -->
+    <div id="solved-questions"></div>
+
+    <!-- 最終問題の正解後、正解済みの問題の下へ移して表示します。 -->
+    <section id="normal-clear" class="clear-screen" aria-label="本編クリア" hidden>
+      <h2 class="visually-hidden">本編クリア！</h2>
+      <img class="clear-image" src="images/Clear.png" alt="portable Clear!!">
+      <p class="clear-caption">本編クリア！ 続けてEX問題に挑戦できます。</p>
+      <div class="clear-actions">
+        <a id="normal-clear-tweet" class="clear-tweet" href="https://x.com/intent/tweet"
+           target="_blank" rel="noopener noreferrer" aria-label="本編クリアをポスト(ツイート)（𝕏(Twitter)の投稿画面を別タブで開く）">
+          <span class="clear-tweet-label">𝕏(Twitter)で本編クリアをポスト(ツイート)</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- 現在の問題です。 -->
+    <section id="game" class="question-card" aria-labelledby="question-title">
+      <header class="question-header">
+        <h2 id="question-title" class="question-heading"></h2>
+      </header>
+
+      <img id="question-image" class="question-image" alt="">
+      <p id="image-error" class="image-error" hidden>
+        問題画像を読み込めませんでした。<br>ページを再読み込みしてください。
+      </p>
+
+      <form id="answer-form" class="answer-form" onsubmit="checkAnswer(event)">
+        <div id="image-keyboard" class="image-keyboard">
+          <img class="panel-background" src="images/input-panel.png" alt=""
+               aria-hidden="true">
+          <input id="answer" type="text" aria-label="答え" placeholder="答えを入力してください"
+                 autocomplete="off" autocapitalize="off" spellcheck="false"
+                 required aria-describedby="result keyboard-help">
+          <div id="panel-keys" class="panel-keys" role="group" aria-label="文字入力パネル"></div>
+        </div>
+        <p id="keyboard-help" class="keyboard-help">パネルを押して入力できます。入力欄から直接打ち込むこともできます。</p>
+        <p id="result" class="answer-result" role="status"></p>
+      </form>
+
+      <section class="inline-hints" aria-labelledby="current-hints-title">
+        <h3 id="current-hints-title">この問題のヒント</h3>
+        <div class="inline-hint-grid">
+          <details id="hint-1" class="inline-hint">
+            <summary><span id="hint-1-action">ヒント1を見る</span></summary>
+            <div class="inline-hint-content">
+              <img id="hint-1-image" class="inline-hint-image" alt="">
+              <p id="hint-1-error" class="hint-error" role="status" hidden>
+                ヒント画像を読み込めませんでした。
+              </p>
+            </div>
+          </details>
+          <details id="hint-2" class="inline-hint">
+            <summary><span id="hint-2-action">ヒント2を見る</span></summary>
+            <div class="inline-hint-content">
+              <img id="hint-2-image" class="inline-hint-image" alt="">
+              <p id="hint-2-error" class="hint-error" role="status" hidden>
+                ヒント画像を読み込めませんでした。
+              </p>
+            </div>
+          </details>
+          <details id="hint-3" class="inline-hint" hidden>
+            <summary><span id="hint-3-action">ヒント3を見る</span></summary>
+            <div class="inline-hint-content">
+              <img id="hint-3-image" class="inline-hint-image" alt="">
+              <p id="hint-3-error" class="hint-error" role="status" hidden>
+                ヒント画像を読み込めませんでした。
+              </p>
+            </div>
+          </details>
+          <details id="hint-4" class="inline-hint" hidden>
+            <summary><span id="hint-4-action">ヒント4を見る</span></summary>
+            <div class="inline-hint-content">
+              <img id="hint-4-image" class="inline-hint-image" alt="">
+              <p id="hint-4-error" class="hint-error" role="status" hidden>
+                ヒント画像を読み込めませんでした。
+              </p>
+            </div>
+          </details>
+          <details id="hint-5" class="inline-hint" hidden>
+            <summary><span id="hint-5-action">ヒント5を見る</span></summary>
+            <div class="inline-hint-content">
+              <img id="hint-5-image" class="inline-hint-image" alt="">
+              <p id="hint-5-error" class="hint-error" role="status" hidden>
+                ヒント画像を読み込めませんでした。
+              </p>
+            </div>
+          </details>
+        </div>
+      </section>
+    </section>
+
+    <section id="clear-screen" class="clear-screen" aria-label="EXクリア" hidden>
+      <h2 class="visually-hidden">EX問題まで全問クリア！</h2>
+      <img class="clear-image" src="images/EXClear.png" alt="portable EX Clear!!!">
+      <p class="clear-caption">EX問題までクリア！<br>最後まで遊んでいただき、ありがとうございました。</p>
+      <div class="clear-actions">
+        <a id="ex-clear-tweet" class="clear-tweet" href="https://x.com/intent/tweet"
+           target="_blank" rel="noopener noreferrer" aria-label="EXクリアをポスト(ツイート)（𝕏(Twitter)の投稿画面を別タブで開く）">
+          <span class="clear-tweet-label">𝕏(Twitter)でEXクリアをポスト(ツイート)</span>
+        </a>
+      </div>
+      <section class="clear-extras" aria-label="あとがきと制作協力">
+        <details class="clear-extra">
+          <summary>あとがき</summary>
+          <a class="clear-extra-image-link" href="images/Atogaki.png" target="_blank" rel="noopener noreferrer" aria-label="あとがきを大きく表示（別タブで開く）">
+            <img class="clear-extra-image" data-src="images/Atogaki.png" width="810" height="1080" alt="portableのあとがき">
+          </a>
+        </details>
+        <details class="clear-extra">
+          <summary>テストプレイ協力</summary>
+          <a class="clear-extra-image-link" href="images/Testplay.png" target="_blank" rel="noopener noreferrer" aria-label="テストプレイ協力者の画像を大きく表示（別タブで開く）">
+            <img class="clear-extra-image" data-src="images/Testplay.png" width="810" height="1080" alt="テストプレイ協力者一覧（敬称略）">
+          </a>
+        </details>
+      </section>
+    </section>
+
+    <section class="progress-controls" aria-label="進捗の保存と初期化">
+      <p id="progress-save-status" class="progress-save-status" role="status">進捗はこのブラウザーに自動保存されます。</p>
+      <button id="restart-button" class="restart-button" type="button">はじめから解く</button>
+    </section>
+  </main>
+
+  <dialog id="restart-dialog" class="restart-dialog" aria-labelledby="restart-title" aria-describedby="restart-description">
+    <h2 id="restart-title">進捗を初期化しますか？</h2>
+    <p id="restart-description">保存された進捗を消して、例題からはじめます。</p>
+    <form method="dialog" class="dialog-actions">
+      <button class="dialog-button" value="cancel" autofocus>キャンセル</button>
+      <button id="confirm-restart" class="dialog-button dialog-reset" type="button">初期化してはじめる</button>
+    </form>
+  </dialog>
+
+  <footer class="page-footer">
+    <a href="https://x.com/nekosanjo_VRC" target="_blank" rel="noopener noreferrer" aria-label="作者の𝕏(Twitter)：@nekosanjo_VRC（別タブで開く）">@nekosanjo_VRC</a>
+    <span class="brand-logo footer-logo" role="img" aria-label="portable"></span>
+  </footer>
+
+  <div id="portable-images" class="portable-images" role="region" aria-label="持ち運び中の正解画像" hidden></div>
+  <p id="portable-help" class="visually-hidden">ドラッグまたはタップで正解画像を小さくして持ち運べます。キーボードではEnterかスペースで取り出し、矢印キーで移動できます。Escapeか右側の「戻す」で、持ち運び中の画像をまとめて戻せます。</p>
+  <p id="portable-status" class="visually-hidden" role="status"></p>
+
+  <script>
+    // 画像の拡張子です。JPG画像なら "jpg" に変更します。
+    const imageExtension = "png";
+
+    function fitClearPostButtons() {
+      for (const link of document.querySelectorAll(".clear-tweet")) {
+        if (!link.getClientRects().length) continue;
+        // まず通常の文字サイズで測り、狭い画面でのみ一行に収まる大きさに調整します。
+        link.style.removeProperty("font-size");
+        const style = window.getComputedStyle(link);
+        const baseSize = parseFloat(style.fontSize);
+        const available = link.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+        const labelWidth = link.querySelector(".clear-tweet-label").getBoundingClientRect().width;
+        if (available > 0 && labelWidth > available) {
+          link.style.fontSize = Math.floor(baseSize * available / labelWidth * 10) / 10 + "px";
+        }
+      }
+    }
+
+    function setupClearTweets() {
+      const pageUrl = new URL(window.location.href);
+      pageUrl.search = "";
+      pageUrl.hash = "";
+      const isLocal = ["localhost", "127.0.0.1", "[::1]"].includes(pageUrl.hostname) ||
+        /\.(?:local|localhost)$/.test(pageUrl.hostname);
+      const includeUrl = /^(https?:)$/.test(pageUrl.protocol) && !isLocal;
+      const tweets = [
+        ["normal-clear-tweet", "Web謎『portable』の本編をクリアしました！\n#nazo_ptbl"],
+        ["ex-clear-tweet", "Web謎『portable』のEX問題まで、すべてクリアしました！\n#nazo_ptbl"]
+      ];
+
+      for (const [id, message] of tweets) {
+        const intent = new URL("https://x.com/intent/tweet");
+        intent.searchParams.set("text", message);
+        // 公開サイトでは、そのページのURLも添えます。ローカルのファイルパスは含めません。
+        if (includeUrl) intent.searchParams.set("url", pageUrl.href);
+        document.getElementById(id).href = intent.href;
+      }
+      if ("ResizeObserver" in window) {
+        const observer = new ResizeObserver(fitClearPostButtons);
+        document.querySelectorAll(".clear-actions").forEach(actions => observer.observe(actions));
+      }
+      window.addEventListener("resize", fitClearPostButtons);
+      if (document.fonts) document.fonts.ready.then(fitClearPostButtons);
+    }
+
+    // 答えの文字列を置かず、入力した答えのハッシュ値で照合します。
+    // これはソースからの読み取り対策です。サーバー側の判定ではありません。
+    const answerChecks = [
+      {"salt": "dbc52cc261e505757988a57b6e73d532", "hash": "fb70d44bf49a547f85f54cc2a540a29115f737f9ab0fca004ea60ff76d6d43b6"}, // N0
+      {"salt": "4c230d77ba4abd5b41344d42d8a15f75", "hash": "f363548abc4f043aeb7cb209d75345ddae464bc2b36f3426f7d05d43e3eb2d3e"}, // N1
+      {"salt": "fcf85f5500cfd61b3ffc576caae3eed5", "hash": "2d31e3d07cefb35de79070da25ebcd15ceaae1bd44278a4e699fc6b425ae11b8"}, // N2
+      {"salt": "aa8593bc35fc21fd64589614649c395d", "hash": "d76b96f3e533f72e3e9c2defb8de87eb4d42b7a1f9a088aa45b3bdca075c822b"}, // N3
+      {"salt": "0bc3195ca800c39390cb386817ac556a", "hash": "ae126c688b7d2ece6b85f6dfcca8a7b88b1cdb64f0a6d4d180ee1ffd0e940c89"}, // N4
+      {"salt": "3c13622d5704bb0a21b21da2ba71de39", "hash": "468f06ec016f9328d3be4f3a0f2de2ee9cbfb9088b2301f884a3a17ea5054331"}, // N5
+      {"salt": "f7376236d68ab2fe5bd910f515ca2f2e", "hash": "d0b01468d890af339ca1b23bea6829a07d1b4ad8256b51504938d08bc02eecd5"}, // N6
+      {"salt": "1dfc4e3c0ba1f6711d6801925d516c62", "hash": "b181ec8f696c73399c9ad90def9ed0ba52518be07d5f8dd46d6f402c8d86b197"}, // N7
+      {"salt": "808574ba2cad013fe49ed8d3449f9c9c", "hash": "642c29ae9ebe158cddf8c82070f9663c3b475486950db006e13a7309aebcf906"}, // N8
+      {"salt": "c34497a137cceb0f39005c6006fe2439", "hash": "9d6db039c26e24c83c65a208e045ab2dd1467fcb5aa1d197fd7a24be53d91f25"}, // N9
+      {"salt": "625b789995c7e68b685ad101e839cac9", "hash": "24b9b90363a0183f686d06cc39be3486c91fd3c4cf224d6c8a8b44b586540fdd"}, // N10
+      {"salt": "ed59e4b936407da8dc63079fa3b677d5", "hash": "9fb674e7b8361db73fbeaeba8abe39960f4b38339aadf49150c2534203fd59ab"}, // N11
+      {"salt": "11e29a40a69cfe628bfcf3fe68129a0a", "hash": "d42e19aff08ff53643940b1ec01387f248b81acc86ed516b931a1575b5702e37"}, // N12
+      {"salt": "b7d8e622a2d63d7287daa56f2c56962d", "hash": "e1a8fe95da919c2f9010a0fff7afd58148030de3e5e8cdd63969a30b3cbfd75e"}, // N13
+      {"salt": "26903334e154c915a351b94e609e26e0", "hash": "e68875549e8c95cd4698a1e6878cbcf326fc017f8d302d5fe9417824a9441b01"}, // N14
+      {"salt": "4141e927bb4b71d9b48c25c2b124f905", "hash": "defe35ab007fb1d3098f8f3dbe662ad08d27eb3baf35df674a2b9c3bf2d9ecc2"}, // N15
+      {"salt": "276072785876e8498e14502431eb0bae", "hash": "ce6634b5fece0f4f709e5ef5b294a7c5630173ad8021c9e3e3bf9e7fd307a4a6"}, // N16
+      {"salt": "2d71eaa9db713864c405a253eb63dcc5", "hash": "66304427edffd7871f124ab4e4d10556f19d6d584964ea8a592e4032072eddcd"}, // N17
+      {"salt": "7952e491b6e231c60ef8dc39b8bb3863", "hash": "10a7b33abdcce04426dc584b4b91e35611dc6c7711d0018231af02d307fc5bb2"} // N18
+    ];
+
+    let currentQuestion = 0;
+
+    const answerInput = document.getElementById("answer");
+    const answerForm = document.getElementById("answer-form");
+    const questionImage = document.getElementById("question-image");
+    const imageError = document.getElementById("image-error");
+    const result = document.getElementById("result");
+    const solvedQuestions = document.getElementById("solved-questions");
+    const game = document.getElementById("game");
+    const normalClear = document.getElementById("normal-clear");
+    const clearScreen = document.getElementById("clear-screen");
+    const progressSaveStatus = document.getElementById("progress-save-status");
+    const restartDialog = document.getElementById("restart-dialog");
+    const hintLevels = [1, 2, 3, 4, 5];
+    // 同じドメイン内に別の作品があっても、保存先が重ならないようにします。
+    const progressStorageKey = "portable:progress:v1:" + new URL(".", window.location.href).pathname;
+
+    const portableLayer = document.getElementById("portable-images");
+    const portableStatus = document.getElementById("portable-status");
+    const portableReturnButton = document.getElementById("portable-return-all");
+    const portableImages = new Map();
+    let portableDrag = null;
+    let portableStack = 0;
+
+    function positionPortableImage(card, left, top) {
+      const rect = card.getBoundingClientRect();
+      const maxLeft = Math.max(8, document.documentElement.clientWidth - rect.width - 8);
+      const maxTop = Math.max(8, window.innerHeight - rect.height - 8);
+      card.style.left = Math.max(8, Math.min(left, maxLeft)) + "px";
+      card.style.top = Math.max(8, Math.min(top, maxTop)) + "px";
+    }
+
+    function finishPortableDrag() {
+      const drag = portableDrag;
+      portableDrag = null;
+      document.body.classList.remove("is-portable-dragging");
+      if (drag && drag.handle.hasPointerCapture(drag.pointerId)) {
+        drag.handle.releasePointerCapture(drag.pointerId);
+      }
+    }
+
+    function clearPortableImages() {
+      finishPortableDrag();
+      portableImages.clear();
+      portableLayer.replaceChildren();
+      portableLayer.hidden = true;
+      portableReturnButton.hidden = true;
+      portableStack = 0;
+      portableStatus.textContent = "";
+    }
+
+    function returnAllPortableImages() {
+      if (!portableImages.size) return;
+      const active = document.activeElement;
+      const focused = Array.from(portableImages.values()).find(item => item.card.contains(active));
+      const focusTarget = focused ? focused.source : active === portableReturnButton ?
+        document.querySelector('.question-jump-link[aria-current="location"]') || document.querySelector(".question-jump-link") : null;
+      clearPortableImages();
+      if (focusTarget && focusTarget.isConnected) focusTarget.focus({ preventScroll: true });
+      portableStatus.textContent = "持ち運び中の画像をすべて戻しました。";
+    }
+
+    portableReturnButton.addEventListener("click", returnAllPortableImages);
+
+    function openPortableImage(number, source, left, top) {
+      let item = portableImages.get(number);
+      if (!item) {
+        const title = getQuestionTitle(number);
+        const card = document.createElement("section");
+        card.className = "portable-card";
+        card.dataset.question = number;
+        card.tabIndex = 0;
+        card.setAttribute("aria-label", title + "の持ち運び画像");
+        card.setAttribute("aria-describedby", "portable-help");
+
+        const image = document.createElement("img");
+        image.className = "portable-card-image";
+        image.src = source.src;
+        image.alt = source.alt;
+        image.draggable = false;
+        if (source.naturalWidth && source.naturalHeight) {
+          image.width = source.naturalWidth;
+          image.height = source.naturalHeight;
+        }
+        image.addEventListener("load", function() {
+          const rect = card.getBoundingClientRect();
+          positionPortableImage(card, rect.left, rect.top);
+        });
+        card.appendChild(image);
+        card.addEventListener("dragstart", event => event.preventDefault());
+        card.addEventListener("pointerdown", function(event) {
+          if (event.button !== 0 || !event.isPrimary) return;
+          finishPortableDrag();
+          card.style.zIndex = ++portableStack;
+          const rect = card.getBoundingClientRect();
+          portableDrag = { pointerId: event.pointerId, handle: card, card,
+            offsetX: event.clientX - rect.left, offsetY: event.clientY - rect.top };
+          card.setPointerCapture(event.pointerId);
+          card.focus({ preventScroll: true });
+          document.body.classList.add("is-portable-dragging");
+          event.preventDefault();
+        });
+        card.addEventListener("keydown", function(event) {
+          if (event.key === "Escape") {
+            event.preventDefault();
+            event.stopPropagation();
+            returnAllPortableImages();
+            return;
+          }
+          const direction = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] }[event.key];
+          if (!direction) return;
+          event.preventDefault();
+          const rect = card.getBoundingClientRect();
+          const step = event.shiftKey ? 40 : 12;
+          positionPortableImage(card, rect.left + direction[0] * step, rect.top + direction[1] * step);
+          card.style.zIndex = ++portableStack;
+        });
+        card.addEventListener("lostpointercapture", function(event) {
+          if (portableDrag && portableDrag.pointerId === event.pointerId) finishPortableDrag();
+        });
+        item = { card, source };
+        portableImages.set(number, item);
+        portableLayer.hidden = false;
+        portableReturnButton.hidden = false;
+        portableLayer.appendChild(card);
+        portableStatus.textContent = title + "の画像を小さくしました。";
+      }
+      item.card.style.zIndex = ++portableStack;
+      positionPortableImage(item.card, left, top);
+      return item.card;
+    }
+
+    function enablePortableImage(source, number) {
+      source.classList.add("portable-source");
+      source.draggable = false;
+      source.tabIndex = 0;
+      source.setAttribute("role", "button");
+      source.setAttribute("aria-label", getQuestionTitle(number) + "の正解画像を持ち運ぶ");
+      source.setAttribute("aria-describedby", "portable-help");
+      source.title = "ドラッグして持ち運ぶ（タップでも可）";
+      let suppressClick = false;
+      source.addEventListener("dragstart", event => event.preventDefault());
+      source.addEventListener("pointerdown", function(event) {
+        if (event.button !== 0 || !event.isPrimary) return;
+        finishPortableDrag();
+        suppressClick = false;
+        const rect = source.getBoundingClientRect();
+        portableDrag = { pointerId: event.pointerId, handle: source, source, number,
+          startX: event.clientX, startY: event.clientY,
+          ratioX: (event.clientX - rect.left) / rect.width,
+          ratioY: (event.clientY - rect.top) / rect.height,
+          moved: () => { suppressClick = true; } };
+        if (event.pointerType === "mouse") source.setPointerCapture(event.pointerId);
+      });
+      source.addEventListener("lostpointercapture", function(event) {
+        if (portableDrag && portableDrag.pointerId === event.pointerId) finishPortableDrag();
+      });
+      source.addEventListener("click", function(event) {
+        if (suppressClick) { suppressClick = false; return; }
+        const rect = source.getBoundingClientRect();
+        openPortableImage(number, source, event.clientX ? event.clientX + 12 : rect.left + 16,
+          event.clientY ? event.clientY + 12 : rect.top + 16);
+      });
+      source.addEventListener("keydown", function(event) {
+        if (event.key !== "Enter" && event.key !== " ") return;
+        event.preventDefault();
+        const rect = source.getBoundingClientRect();
+        openPortableImage(number, source, rect.left + 16, rect.top + 16).focus({ preventScroll: true });
+      });
+    }
+
+    window.addEventListener("pointermove", function(event) {
+      const drag = portableDrag;
+      if (!drag || drag.pointerId !== event.pointerId) return;
+      if (!drag.card) {
+        const dx = Math.abs(event.clientX - drag.startX);
+        const dy = Math.abs(event.clientY - drag.startY);
+        if (Math.max(dx, dy) < 8) return;
+        // 元の画像の上では縦スクロールを保ち、タップでも取り出せるようにします。
+        if (event.pointerType === "touch" && dy > dx) { finishPortableDrag(); return; }
+        drag.card = openPortableImage(drag.number, drag.source, event.clientX, event.clientY);
+        drag.moved();
+        const rect = drag.card.getBoundingClientRect();
+        drag.offsetX = drag.ratioX * rect.width;
+        drag.offsetY = drag.ratioY * rect.height;
+        drag.handle.setPointerCapture(event.pointerId);
+        document.body.classList.add("is-portable-dragging");
+      }
+      event.preventDefault();
+      positionPortableImage(drag.card, event.clientX - drag.offsetX, event.clientY - drag.offsetY);
+    }, { passive: false });
+    for (const type of ["pointerup", "pointercancel"]) {
+      window.addEventListener(type, function(event) {
+        if (portableDrag && portableDrag.pointerId === event.pointerId) finishPortableDrag();
+      });
+    }
+    window.addEventListener("blur", finishPortableDrag);
+    window.addEventListener("resize", function() {
+      for (const { card } of portableImages.values()) {
+        const rect = card.getBoundingClientRect();
+        positionPortableImage(card, rect.left, rect.top);
+      }
+    });
+
+    function resetClearExtras() {
+      for (const details of document.querySelectorAll(".clear-extra")) {
+        details.open = false;
+        details.querySelector("img").removeAttribute("src");
+      }
+    }
+
+    for (const details of document.querySelectorAll(".clear-extra")) {
+      details.addEventListener("toggle", function() {
+        if (!details.open || currentQuestion < answerChecks.length) return;
+        const image = details.querySelector("img");
+        if (!image.hasAttribute("src")) image.src = image.dataset.src;
+      });
+    }
+
+    function loadProgress() {
+      try {
+        const saved = JSON.parse(window.localStorage.getItem(progressStorageKey));
+        if (saved && saved.version === 1 && Number.isInteger(saved.currentQuestion) &&
+            saved.currentQuestion >= 0 && saved.currentQuestion <= answerChecks.length) {
+          return saved.currentQuestion;
+        }
+      } catch {
+        progressSaveStatus.dataset.state = "error";
+        progressSaveStatus.textContent = "保存した進捗を読み込めませんでした。このまま遊ぶことはできます。";
+      }
+      return 0;
+    }
+
+    function saveProgress() {
+      try {
+        window.localStorage.setItem(progressStorageKey, JSON.stringify({ version: 1, currentQuestion }));
+        progressSaveStatus.dataset.state = "saved";
+        progressSaveStatus.textContent = "進捗はこのブラウザーに自動保存されています。";
+      } catch {
+        progressSaveStatus.dataset.state = "error";
+        progressSaveStatus.textContent = "進捗を保存できませんでした。ブラウザーの保存設定を確認してください。";
+      }
+    }
+
+    function renderProgress() {
+      clearPortableImages();
+      resetClearExtras();
+      // 本編クリア画面は再利用するため、消す前に正解済み一覧の外へ戻します。
+      normalClear.hidden = true;
+      solvedQuestions.after(normalClear);
+      solvedQuestions.replaceChildren();
+      for (let number = 0; number < Math.min(currentQuestion, 18); number++) {
+        appendSolvedQuestion(number);
+      }
+      game.hidden = currentQuestion >= answerChecks.length;
+      clearScreen.hidden = !game.hidden;
+      if (game.hidden) {
+        resetInlineHints();
+        updateQuestionNavigation();
+      } else {
+        showQuestion();
+      }
+    }
+
+    document.getElementById("restart-button").addEventListener("click", function() {
+      restartDialog.showModal();
+    });
+
+    document.getElementById("confirm-restart").addEventListener("click", function() {
+      restartDialog.close();
+      try {
+        // この作品の進捗だけを消します。
+        window.localStorage.removeItem(progressStorageKey);
+      } catch {
+        progressSaveStatus.dataset.state = "error";
+        progressSaveStatus.textContent = "進捗を初期化できませんでした。ブラウザーの保存設定を確認してください。";
+        return;
+      }
+      currentQuestion = 0;
+      renderProgress();
+      progressSaveStatus.dataset.state = "saved";
+      progressSaveStatus.textContent = "進捗を初期化しました。例題からはじめられます。";
+      game.tabIndex = -1;
+      game.focus({ preventScroll: true });
+      scrollToQuestion("game");
+    });
+
+    const questionJumpList = document.getElementById("question-jump-list");
+    let questionJumpLinks = [];
+    let jumpUpdateFrame = 0;
+
+    function scrollToQuestion(targetId) {
+      const target = document.getElementById(targetId);
+      if (!target || target.hidden) return;
+      const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
+    }
+
+    function updateViewedQuestion() {
+      jumpUpdateFrame = 0;
+      let viewed = questionJumpLinks[0];
+      const marker = Math.min(window.innerHeight * 0.25, 160);
+      for (const item of questionJumpLinks) {
+        const target = document.getElementById(item.targetId);
+        if (target && !target.hidden && target.getBoundingClientRect().top <= marker) {
+          viewed = item;
+        }
+      }
+      // 最後の問題が短い場合は、上端まで寄せられなくても現在位置にします。
+      if (Math.ceil(window.scrollY + window.innerHeight) >= document.documentElement.scrollHeight - 2) {
+        viewed = questionJumpLinks[questionJumpLinks.length - 1];
+      }
+      for (const item of questionJumpLinks) {
+        if (item === viewed) item.link.setAttribute("aria-current", "location");
+        else item.link.removeAttribute("aria-current");
+      }
+    }
+
+    function scheduleJumpUpdate() {
+      if (!jumpUpdateFrame) jumpUpdateFrame = requestAnimationFrame(updateViewedQuestion);
+    }
+
+    function updateQuestionNavigation() {
+      questionJumpList.replaceChildren();
+      questionJumpLinks = [];
+
+      // すでに表示された問題だけを、例題から順に並べます。
+      for (let number = 0; number <= Math.min(currentQuestion, answerChecks.length - 1); number++) {
+        const solved = number < currentQuestion;
+        const targetId = solved ? (number === 18 ? "clear-screen" : "question-" + number) : "game";
+        const label = number === 0 ? "例題" : number === 17 ? "最終" : number === 18 ? "EX" : String(number);
+        const description = getQuestionTitle(number) + (solved ? "（正解済み）へ移動" : "（解答中）へ移動");
+        const item = document.createElement("li");
+        const link = document.createElement("a");
+        link.className = "question-jump-link";
+        link.href = "#" + targetId;
+        link.textContent = label;
+        link.dataset.state = solved ? "solved" : "current";
+        link.setAttribute("aria-label", description);
+        link.title = description;
+        link.addEventListener("click", function(event) {
+          event.preventDefault();
+          scrollToQuestion(targetId);
+        });
+        item.appendChild(link);
+        questionJumpList.appendChild(item);
+        questionJumpLinks.push({ link, targetId });
+      }
+
+      questionJumpList.scrollTop = questionJumpList.scrollHeight;
+      scheduleJumpUpdate();
+    }
+
+    window.addEventListener("scroll", scheduleJumpUpdate, { passive: true });
+    window.addEventListener("resize", scheduleJumpUpdate);
+    document.addEventListener("load", scheduleJumpUpdate, true);
+
+    // portableの背景画像に、実際に押せるかな入力キーを重ねます。
+    const keyboard = document.getElementById("image-keyboard");
+    const panelKeys = document.getElementById("panel-keys");
+    let questionFitFrame = 0;
+
+    // PCでは、問題の上端から入力パネルの下端までを画面高に合わせます。
+    function fitCurrentQuestion() {
+      questionFitFrame = 0;
+      if (!window.matchMedia("(min-width: 900px)").matches) {
+        questionImage.style.removeProperty("max-height");
+        return;
+      }
+      if (game.hidden || questionImage.hidden || !questionImage.naturalWidth) return;
+
+      const card = game.getBoundingClientRect();
+      const image = questionImage.getBoundingClientRect();
+      const panel = keyboard.getBoundingClientRect();
+      const otherHeight = panel.bottom - card.top - image.height;
+      // 非常に低い画面でも問題画像を小さくしすぎないよう、下限を設けます。
+      const imageHeight = Math.max(220, Math.floor(window.innerHeight - otherHeight - 32));
+      questionImage.style.maxHeight = imageHeight + "px";
+    }
+
+    function scheduleQuestionFit() {
+      if (!questionFitFrame) questionFitFrame = requestAnimationFrame(fitCurrentQuestion);
+    }
+
+    if (document.fonts) document.fonts.ready.then(scheduleQuestionFit);
+    const kanaRows = [
+      ["ゃ","ぁ","わ","ら","や","ま","は","な","た","さ","か","あ"],
+      ["ゅ","ぃ","を","り","ゆ","み","ひ","に","ち","し","き","い"],
+      ["ょ","ぅ","ん","る","よ","む","ふ","ぬ","つ","す","く","う"],
+      ["っ","ぇ","ゐ","れ","゛","め","へ","ね","て","せ","け","え"],
+      ["ー","ぉ","ゑ","ろ","゜","も","ほ","の","と","そ","こ","お"]
+    ];
+
+    function signalAnswerEdit() {
+      answerInput.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+
+    function insertPanelText(text) {
+      const start = answerInput.selectionStart ?? answerInput.value.length;
+      const end = answerInput.selectionEnd ?? start;
+      answerInput.setRangeText(text, start, end, "end");
+      signalAnswerEdit();
+    }
+
+    function applyVoicing(mark) {
+      const start = answerInput.selectionStart ?? answerInput.value.length;
+      const end = answerInput.selectionEnd ?? start;
+      const previous = Array.from(answerInput.value.slice(0, start)).pop();
+      if (start === end && previous) {
+        const decomposed = previous.normalize("NFD");
+        const base = decomposed.replace(/[\u3099\u309a]/g, "");
+        const replacement = (base + (decomposed.includes(mark) ? "" : mark)).normalize("NFC");
+        if (Array.from(replacement).length === 1) {
+          answerInput.setRangeText(replacement, start - previous.length, end, "end");
+          signalAnswerEdit();
+          return;
+        }
+      }
+      insertPanelText(mark === "\u3099" ? "゛" : "゜");
+    }
+
+    function deletePanelCharacter() {
+      const start = answerInput.selectionStart ?? answerInput.value.length;
+      const end = answerInput.selectionEnd ?? start;
+      if (start !== end) {
+        answerInput.setRangeText("", start, end, "end");
+      } else if (start > 0) {
+        const previous = Array.from(answerInput.value.slice(0, start)).pop();
+        answerInput.setRangeText("", start - previous.length, end, "end");
+      }
+      signalAnswerEdit();
+    }
+
+    function clearPanelAnswer() {
+      answerInput.value = "";
+      answerInput.setSelectionRange(0, 0);
+      signalAnswerEdit();
+    }
+
+    function makePanelElement(row, column, label, heightRows = 1, widthColumns = 1, isButton = true) {
+      const element = document.createElement(isButton ? "button" : "span");
+      // 文字12列＋操作2列。左端の列を除いた分、各キーの幅を広げます。
+      const columnStep = 834.5 / 14;
+      element.className = "panel-key";
+      element.style.left = ((17 + column * columnStep) / 868 * 100) + "%";
+      element.style.top = ((73 + row * 55.5) / 363 * 100) + "%";
+      element.style.width = ((widthColumns * columnStep - 1.5) / 868 * 100) + "%";
+      element.style.height = ((heightRows * 55.5 - 1.5) / 363 * 100) + "%";
+      if (isButton) {
+        element.type = "button";
+        element.setAttribute("aria-label", label);
+        element.addEventListener("pointerdown", function(event) { event.preventDefault(); });
+      }
+      panelKeys.appendChild(element);
+      return element;
+    }
+
+    function buildInputPanel() {
+      for (let row = 0; row < 5; row++) {
+        for (let column = 0; column < kanaRows[row].length; column++) {
+          const text = kanaRows[row][column];
+          const label = text === " " ? "空白" : text === "゛" ? "濁点" : text === "゜" ? "半濁点" : text;
+          const button = makePanelElement(row, column, label);
+          button.textContent = text;
+          button.title = label;
+          button.addEventListener("click", function() {
+            if (text === "゛") {
+              applyVoicing("\u3099");
+            } else if (text === "゜") {
+              applyVoicing("\u309a");
+            } else {
+              insertPanelText(text);
+            }
+          });
+        }
+      }
+
+      // 以前の4つの文字種切り替えを、2行×2列の「かな」表示にまとめます。
+      const kana = makePanelElement(0, 12, "かな", 2, 2, false);
+      kana.classList.add("panel-kana");
+      kana.textContent = "かな";
+
+      // Enterは2行×2列、その下にClearとBSを横に並べます。
+      const backspace = makePanelElement(4, 13, "1文字削除");
+      backspace.classList.add("panel-control", "panel-delete");
+      backspace.innerHTML = '<span><span class="panel-symbol" aria-hidden="true">⌫</span><span class="panel-control-word" aria-hidden="true">BS</span></span>';
+      backspace.addEventListener("click", deletePanelCharacter);
+
+      const clear = makePanelElement(4, 12, "すべて消去");
+      clear.classList.add("panel-control", "panel-delete");
+      clear.innerHTML = '<span><span class="panel-symbol" aria-hidden="true">×</span><span class="panel-control-word" aria-hidden="true">Clear</span></span>';
+      clear.addEventListener("click", clearPanelAnswer);
+
+      const enter = makePanelElement(2, 12, "解答する", 2, 2);
+      enter.type = "submit";
+      enter.classList.add("panel-control", "panel-enter");
+      enter.innerHTML = '<span><span class="panel-symbol" aria-hidden="true"><svg class="panel-return-icon" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M25 6v8a6 6 0 0 1-6 6H6m6-6-6 6 6 6"/></svg></span><span class="panel-control-word" aria-hidden="true">Enter</span></span>';
+
+      answerInput.addEventListener("input", function() {
+        answerInput.removeAttribute("aria-invalid");
+        result.textContent = "";
+      });
+
+      function sizePanel() {
+        const scale = keyboard.getBoundingClientRect().width / 868;
+        keyboard.style.setProperty("--panel-key-font", (36 * scale) + "px");
+        keyboard.style.setProperty("--panel-control-font", (20 * scale) + "px");
+        keyboard.style.setProperty("--panel-input-font", (30 * scale) + "px");
+        keyboard.style.setProperty("--panel-radius", (10 * scale) + "px");
+        scheduleQuestionFit();
+      }
+      if ("ResizeObserver" in window) new ResizeObserver(sizePanel).observe(keyboard);
+      window.addEventListener("resize", sizePanel);
+      sizePanel();
+    }
+
+    // SHA-256。外部ライブラリーや通信を使わず、ローカルのHTMLでも照合できます。
+    function sha256(value) {
+      const constants = [
+        0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+        0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+        0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+        0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+        0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+        0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+        0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+        0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+      ];
+      const state = [
+        0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
+        0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+      ];
+      const bytes = new TextEncoder().encode(value);
+      const padded = new Uint8Array(Math.ceil((bytes.length + 9) / 64) * 64);
+      padded.set(bytes);
+      padded[bytes.length] = 0x80;
+      const view = new DataView(padded.buffer);
+      view.setUint32(padded.length - 8, Math.floor(bytes.length / 0x20000000));
+      view.setUint32(padded.length - 4, (bytes.length * 8) >>> 0);
+      const words = new Uint32Array(64);
+      const rotate = (word, count) => (word >>> count) | (word << (32 - count));
+
+      for (let offset = 0; offset < padded.length; offset += 64) {
+        for (let i = 0; i < 16; i++) words[i] = view.getUint32(offset + i * 4);
+        for (let i = 16; i < 64; i++) {
+          const a = words[i - 15];
+          const b = words[i - 2];
+          const s0 = rotate(a, 7) ^ rotate(a, 18) ^ (a >>> 3);
+          const s1 = rotate(b, 17) ^ rotate(b, 19) ^ (b >>> 10);
+          words[i] = (words[i - 16] + s0 + words[i - 7] + s1) >>> 0;
+        }
+
+        let [a, b, c, d, e, f, g, h] = state;
+        for (let i = 0; i < 64; i++) {
+          const s1 = rotate(e, 6) ^ rotate(e, 11) ^ rotate(e, 25);
+          const choice = (e & f) ^ (~e & g);
+          const t1 = (h + s1 + choice + constants[i] + words[i]) >>> 0;
+          const s0 = rotate(a, 2) ^ rotate(a, 13) ^ rotate(a, 22);
+          const majority = (a & b) ^ (a & c) ^ (b & c);
+          const t2 = (s0 + majority) >>> 0;
+          h = g; g = f; f = e; e = (d + t1) >>> 0;
+          d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+        }
+        const round = [a, b, c, d, e, f, g, h];
+        for (let i = 0; i < 8; i++) state[i] = (state[i] + round[i]) >>> 0;
+      }
+      return state.map(word => word.toString(16).padStart(8, "0")).join("");
+    }
+
+    function normalizeAnswer(value) {
+      return value.normalize("NFKC").trim()
+        .replace(/[ァ-ヶ]/g, char => String.fromCharCode(char.charCodeAt(0) - 0x60))
+        .toLowerCase();
+    }
+
+    // 現在の問題のヒントだけを、このページ内で開きます。
+    function resetInlineHints() {
+      const hintCount = currentQuestion === 18 ? 5 : 2;
+      for (const level of hintLevels) {
+        const details = document.getElementById("hint-" + level);
+        details.open = false;
+        details.hidden = level > hintCount;
+        document.getElementById("hint-" + level + "-action").textContent =
+          "ヒント" + level + "を見る";
+        const image = document.getElementById("hint-" + level + "-image");
+        image.removeAttribute("src");
+        image.alt = "";
+        image.hidden = false;
+        document.getElementById("hint-" + level + "-error").hidden = true;
+      }
+    }
+
+    for (const level of hintLevels) {
+      const details = document.getElementById("hint-" + level);
+      const image = document.getElementById("hint-" + level + "-image");
+      const error = document.getElementById("hint-" + level + "-error");
+
+      details.addEventListener("toggle", function() {
+        document.getElementById("hint-" + level + "-action").textContent =
+          "ヒント" + level + (details.open ? "を閉じる" : "を見る");
+
+        if (details.hidden || !details.open || currentQuestion >= answerChecks.length) return;
+
+        image.hidden = false;
+        error.hidden = true;
+        image.alt = getQuestionTitle(currentQuestion) + "のヒント" + level;
+        // 例：N18H.png、N18H2.png、N18H3.png、N18H4.png、N18H5.png。
+        image.src = "images/N" + currentQuestion + "H" +
+          (level === 1 ? "" : level) + "." + imageExtension;
+      });
+
+      image.addEventListener("error", function() {
+        image.hidden = true;
+        error.hidden = false;
+      });
+
+      image.addEventListener("load", function() {
+        image.hidden = false;
+        error.hidden = true;
+      });
+    }
+
+    function getQuestionTitle(number) {
+      if (number === 0) return "例題";
+      if (number === 17) return "最終問題";
+      if (number === 18) return "EX問題";
+      return "第" + number + "問目";
+    }
+
+    function getQuestionKind(number) {
+      if (number === 17) return "final";
+      if (number === 18) return "extra";
+      return "normal";
+    }
+
+    questionImage.addEventListener("error", function() {
+      questionImage.hidden = true;
+      imageError.hidden = false;
+    });
+
+    questionImage.addEventListener("load", function() {
+      questionImage.hidden = false;
+      imageError.hidden = true;
+      scheduleQuestionFit();
+    });
+
+    function showQuestion() {
+      const name = "N" + currentQuestion;
+
+      resetInlineHints();
+
+      game.dataset.kind = getQuestionKind(currentQuestion);
+      document.getElementById("question-title").textContent =
+        getQuestionTitle(currentQuestion);
+
+      imageError.hidden = true;
+      questionImage.hidden = false;
+      questionImage.src = "images/" + name + "." + imageExtension;
+      questionImage.alt = getQuestionTitle(currentQuestion) + "の問題画像";
+
+      answerInput.value = "";
+      answerInput.setSelectionRange(0, 0);
+      answerInput.removeAttribute("aria-invalid");
+      result.textContent = "";
+      updateQuestionNavigation();
+      scheduleQuestionFit();
+    }
+
+    function keepAnswerPosition(section, position) {
+      // 次の問題へ移った入力欄からフォーカスを外し、正解した場所に残します。
+      section.tabIndex = -1;
+      section.focus({ preventScroll: true });
+      window.scrollTo({ left: position.left, top: position.top, behavior: "instant" });
+    }
+
+    function appendSolvedQuestion(number) {
+      const name = "N" + number;
+      const title = getQuestionTitle(number);
+
+      // 正解した問題を、末尾にAが付く画像に置き換えて残します。
+      const solvedSection = document.createElement("section");
+      solvedSection.id = "question-" + number;
+      solvedSection.className = "question-card solved-question";
+      solvedSection.dataset.kind = getQuestionKind(number);
+      solvedSection.setAttribute("aria-label", title + "（正解）");
+
+      const header = document.createElement("header");
+      header.className = "question-header";
+
+      const heading = document.createElement("h2");
+      heading.className = "question-heading";
+      heading.textContent = title;
+
+      const state = document.createElement("span");
+      state.className = "solved-state";
+      state.textContent = "正解";
+
+      const solvedImage = document.createElement("img");
+      solvedImage.className = "question-image";
+      solvedImage.src = "images/" + name + "A." + imageExtension;
+      solvedImage.alt = title + "の正解後の画像";
+      enablePortableImage(solvedImage, number);
+
+      header.append(heading, state);
+      solvedSection.append(header, solvedImage);
+      solvedQuestions.appendChild(solvedSection);
+
+      // 最終問題の直後に本編クリア画像を挟み、その下へEX問題を表示します。
+      if (number === 17) {
+        normalClear.hidden = false;
+        solvedQuestions.appendChild(normalClear);
+      }
+      return solvedSection;
+    }
+
+    function checkAnswer(event) {
+      event.preventDefault();
+
+      if (event.isComposing || currentQuestion >= answerChecks.length) return;
+
+      const answer = normalizeAnswer(answerInput.value);
+      const check = answerChecks[currentQuestion];
+      if (sha256(check.salt + ":" + answer) !== check.hash) {
+        result.textContent = "答えが違うようです。もう一度考えてみましょう。";
+        answerInput.setAttribute("aria-invalid", "true");
+        return;
+      }
+
+      const position = { left: window.scrollX, top: window.scrollY };
+
+      // EX問題はN18A.pngを使わず、EXClear.pngに切り替えます。
+      if (currentQuestion === 18) {
+        resetInlineHints();
+        currentQuestion++;
+        saveProgress();
+        game.hidden = true;
+        clearScreen.hidden = false;
+        updateQuestionNavigation();
+        keepAnswerPosition(clearScreen, position);
+        return;
+      }
+
+      const solvedSection = appendSolvedQuestion(currentQuestion);
+      currentQuestion++;
+      saveProgress();
+      // 待ち時間や次へ進むボタンを挟まず、次の問題を表示します。
+      showQuestion();
+      keepAnswerPosition(solvedSection, position);
+    }
+
+    setupClearTweets();
+    buildInputPanel();
+    currentQuestion = loadProgress();
+    renderProgress();
+  </script>
+</body>
+</html>
+
