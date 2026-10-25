@@ -32,7 +32,6 @@
     body {
       margin: 0;
       padding-right: 76px;
-      /* 画像の追加時に、ブラウザーが入力欄を追って本文を動かすのを防ぎます。 */
       overflow-anchor: none;
       color: var(--ink);
       background: var(--paper);
@@ -44,7 +43,6 @@
 
     button, input { font: inherit; }
 
-    /* 右側に問題への近道を固定し、本文と重ならない余白を確保します。 */
     .question-jump {
       position: fixed;
       z-index: 30;
@@ -137,7 +135,6 @@
       letter-spacing: .12em;
     }
 
-    /* タイトル画像のロゴ部分をそのまま表示し、丸い文字を揃えます。 */
     .brand-logo {
       display: block;
       width: 166px;
@@ -165,12 +162,22 @@
       flex-shrink: 0;
     }
 
-    .header-note {
-      margin: 0;
-      font-size: 17px;
-      font-weight: 700;
-      letter-spacing: .08em;
-    }
+    .author-profile-button { display: inline-flex; align-items: center; justify-content: center; gap: 10px; flex-shrink: 0; min-height: 46px; padding: 8px 14px; border: 2px solid var(--ink); border-radius: 6px; color: var(--ink); background: #e7efea; font-size: 18px; line-height: 1.5; cursor: pointer; }
+    .author-profile-button:hover { background: #d9e7df; }
+    .author-profile-button:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+    .author-profile-button-icon { display: block; width: 30px; height: 30px; border-radius: 50%; object-fit: cover; object-position: 50% 47%; }
+    .author-profile-dialog { position: fixed; inset: 0; width: min(560px, calc(100% - 32px)); height: fit-content; max-height: calc(100dvh - 32px); margin: auto; padding: 26px; overflow-y: auto; border: 2px solid var(--ink); border-radius: 12px; color: var(--ink); background: var(--paper); }
+    .author-profile-dialog::backdrop { background: #2f394980; }
+    .author-profile-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid #c8c9c0; }
+    .author-profile-dialog h2 { margin: 0; font-size: 26px; line-height: 1.5; }
+    .author-profile-close { flex-shrink: 0; min-height: 44px; padding: 8px 12px; }
+    .author-profile-identity { display: flex; align-items: center; gap: 20px; margin-top: 24px; }
+    .author-profile-avatar { display: block; flex-shrink: 0; width: 100px; height: 100px; border: 2px solid var(--ink); border-radius: 50%; object-fit: cover; object-position: 50% 47%; }
+    .author-profile-name { margin: 0; font-size: 26px; line-height: 1.5; }
+    .author-profile-social { display: inline-block; margin-top: 6px; color: #386e66; font-size: 20px; line-height: 1.6; text-underline-offset: .2em; overflow-wrap: anywhere; }
+    .author-profile-social:hover { color: var(--ink); }
+    .author-profile-bio { margin: 24px 0 0; font-size: 20px; line-height: 1.9; overflow-wrap: anywhere; }
+    .author-profile-bio span { display: block; }
 
     .intro { padding: 32px 0 30px; }
 
@@ -621,8 +628,17 @@
       .question-jump-title { font-size: 13px; }
       .question-jump-link { min-height: 32px; font-size: 14px; }
       .header-inner, .page-shell, .page-footer { width: calc(100% - 28px); }
-      .header-inner { min-height: 72px; }
-      .header-note { display: none; }
+      .header-inner { min-height: 72px; flex-wrap: wrap; gap: 12px; padding-block: 12px; }
+      .author-profile-button { margin-left: auto; padding: 8px 10px; font-size: 17px; }
+      .author-profile-dialog { padding: 20px; }
+      .author-profile-dialog-header { gap: 10px; }
+      .author-profile-dialog h2 { font-size: 24px; }
+      .author-profile-close { padding-inline: 8px; }
+      .author-profile-identity { gap: 14px; }
+      .author-profile-avatar { width: 80px; height: 80px; }
+      .author-profile-name { font-size: 24px; }
+      .author-profile-social { font-size: 18px; }
+      .author-profile-bio { font-size: 18px; }
       .brand { font-size: 13px; gap: 11px; }
       .brand-mark { width: 68px; height: 38px; font-size: 18px; }
       .intro { padding: 22px 0 24px; }
@@ -674,7 +690,10 @@
         <span class="brand-mark">Web謎</span>
         <span class="brand-logo" role="img" aria-label="portable"></span>
       </div>
-      <p class="header-note">ひらめきを、つなごう。</p>
+      <button id="author-profile-button" class="author-profile-button" type="button" aria-haspopup="dialog" aria-controls="author-profile-dialog" aria-expanded="false">
+        <img class="author-profile-button-icon" src="Images/author-icon.png" width="30" height="30" alt="" aria-hidden="true">
+        <span>作者プロフィール</span>
+      </button>
     </div>
   </header>
 
@@ -685,7 +704,6 @@
            alt="謎解きワールド portable｜作：ねこさんじょう">
     </div>
 
-    <!-- 注意書きは画面の幅に合わせて読みやすく折り返すテキストで表示します。 -->
     <details class="notice" aria-labelledby="notice-title">
       <summary class="notice-title"><h2 id="notice-title">遊ぶ前に</h2></summary>
       <div class="notice-content">
@@ -722,10 +740,8 @@
       </div>
     </details>
 
-    <!-- 正解済みの画像が、ここに順番に並びます。 -->
     <div id="solved-questions"></div>
 
-    <!-- 最終問題の正解後、正解済みの問題の下へ移して表示します。 -->
     <section id="normal-clear" class="clear-screen" aria-label="本編クリア" hidden>
       <h2 class="visually-hidden">本編クリア！</h2>
       <img class="clear-image" src="Images/Clear.png" alt="portable Clear!!">
@@ -738,7 +754,6 @@
       </div>
     </section>
 
-    <!-- 現在の問題です。 -->
     <section id="game" class="question-card" aria-labelledby="question-title">
       <header class="question-header">
         <h2 id="question-title" class="question-heading"></h2>
@@ -855,6 +870,25 @@
     </form>
   </dialog>
 
+  <dialog id="author-profile-dialog" class="author-profile-dialog" aria-labelledby="author-profile-title" aria-describedby="author-profile-bio">
+    <div class="author-profile-dialog-header">
+      <h2 id="author-profile-title">作者プロフィール</h2>
+      <button id="author-profile-close" class="dialog-button author-profile-close" type="button" autofocus>閉じる</button>
+    </div>
+    <div class="author-profile-identity">
+      <img class="author-profile-avatar" src="Images/author-icon.png" width="100" height="100" alt="ねこさんじょうのアイコン" loading="lazy">
+      <div>
+        <p class="author-profile-name">ねこさんじょう</p>
+        <a class="author-profile-social" href="https://x.com/nekosanjo_VRC" target="_blank" rel="noopener noreferrer" aria-label="ねこさんじょうの𝕏(Twitter)プロフィール（別タブで開く）">@nekosanjo_VRC</a>
+      </div>
+    </div>
+    <p id="author-profile-bio" class="author-profile-bio">
+      <span>VRChatで謎解きを作っています。</span>
+      <span>Web謎『portable』の作者です。</span>
+      <span>どうぞ楽しんでいってください。</span>
+    </p>
+  </dialog>
+
   <footer class="page-footer">
     <a href="https://x.com/nekosanjo_VRC" target="_blank" rel="noopener noreferrer" aria-label="作者の𝕏(Twitter)：@nekosanjo_VRC（別タブで開く）">@nekosanjo_VRC</a>
     <span class="brand-logo footer-logo" role="img" aria-label="portable"></span>
@@ -865,13 +899,32 @@
   <p id="portable-status" class="visually-hidden" role="status"></p>
 
   <script>
-    // 画像の拡張子です。JPG画像なら "jpg" に変更します。
     const imageExtension = "png";
+
+    const authorProfileButton = document.getElementById("author-profile-button");
+    const authorProfileDialog = document.getElementById("author-profile-dialog");
+    authorProfileButton.addEventListener("click", function() {
+      if (authorProfileDialog.open) return;
+      authorProfileDialog.showModal();
+      authorProfileButton.setAttribute("aria-expanded", "true");
+    });
+    document.getElementById("author-profile-close").addEventListener("click", function() {
+      authorProfileDialog.close();
+    });
+    authorProfileDialog.addEventListener("close", function() {
+      authorProfileButton.setAttribute("aria-expanded", "false");
+      authorProfileButton.focus({ preventScroll: true });
+    });
+    authorProfileDialog.addEventListener("click", function(event) {
+      if (event.target !== authorProfileDialog) return;
+      const rect = authorProfileDialog.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right ||
+          event.clientY < rect.top || event.clientY > rect.bottom) authorProfileDialog.close();
+    });
 
     function fitClearPostButtons() {
       for (const link of document.querySelectorAll(".clear-tweet")) {
         if (!link.getClientRects().length) continue;
-        // まず通常の文字サイズで測り、狭い画面でのみ一行に収まる大きさに調整します。
         link.style.removeProperty("font-size");
         const style = window.getComputedStyle(link);
         const baseSize = parseFloat(style.fontSize);
@@ -898,7 +951,6 @@
       for (const [id, message] of tweets) {
         const intent = new URL("https://x.com/intent/tweet");
         intent.searchParams.set("text", message);
-        // 公開サイトでは、そのページのURLも添えます。ローカルのファイルパスは含めません。
         if (includeUrl) intent.searchParams.set("url", pageUrl.href);
         document.getElementById(id).href = intent.href;
       }
@@ -910,28 +962,26 @@
       if (document.fonts) document.fonts.ready.then(fitClearPostButtons);
     }
 
-    // 答えの文字列を置かず、入力した答えのハッシュ値で照合します。
-    // これはソースからの読み取り対策です。サーバー側の判定ではありません。
     const answerChecks = [
-      {"salt": "dbc52cc261e505757988a57b6e73d532", "hash": "fb70d44bf49a547f85f54cc2a540a29115f737f9ab0fca004ea60ff76d6d43b6"}, // N0
-      {"salt": "4c230d77ba4abd5b41344d42d8a15f75", "hash": "f363548abc4f043aeb7cb209d75345ddae464bc2b36f3426f7d05d43e3eb2d3e"}, // N1
-      {"salt": "fcf85f5500cfd61b3ffc576caae3eed5", "hash": "2d31e3d07cefb35de79070da25ebcd15ceaae1bd44278a4e699fc6b425ae11b8"}, // N2
-      {"salt": "aa8593bc35fc21fd64589614649c395d", "hash": "d76b96f3e533f72e3e9c2defb8de87eb4d42b7a1f9a088aa45b3bdca075c822b"}, // N3
-      {"salt": "0bc3195ca800c39390cb386817ac556a", "hash": "ae126c688b7d2ece6b85f6dfcca8a7b88b1cdb64f0a6d4d180ee1ffd0e940c89"}, // N4
-      {"salt": "3c13622d5704bb0a21b21da2ba71de39", "hash": "468f06ec016f9328d3be4f3a0f2de2ee9cbfb9088b2301f884a3a17ea5054331"}, // N5
-      {"salt": "f7376236d68ab2fe5bd910f515ca2f2e", "hash": "d0b01468d890af339ca1b23bea6829a07d1b4ad8256b51504938d08bc02eecd5"}, // N6
-      {"salt": "1dfc4e3c0ba1f6711d6801925d516c62", "hash": "b181ec8f696c73399c9ad90def9ed0ba52518be07d5f8dd46d6f402c8d86b197"}, // N7
-      {"salt": "808574ba2cad013fe49ed8d3449f9c9c", "hash": "642c29ae9ebe158cddf8c82070f9663c3b475486950db006e13a7309aebcf906"}, // N8
-      {"salt": "c34497a137cceb0f39005c6006fe2439", "hash": "9d6db039c26e24c83c65a208e045ab2dd1467fcb5aa1d197fd7a24be53d91f25"}, // N9
-      {"salt": "625b789995c7e68b685ad101e839cac9", "hash": "24b9b90363a0183f686d06cc39be3486c91fd3c4cf224d6c8a8b44b586540fdd"}, // N10
-      {"salt": "ed59e4b936407da8dc63079fa3b677d5", "hash": "9fb674e7b8361db73fbeaeba8abe39960f4b38339aadf49150c2534203fd59ab"}, // N11
-      {"salt": "11e29a40a69cfe628bfcf3fe68129a0a", "hash": "d42e19aff08ff53643940b1ec01387f248b81acc86ed516b931a1575b5702e37"}, // N12
-      {"salt": "b7d8e622a2d63d7287daa56f2c56962d", "hash": "e1a8fe95da919c2f9010a0fff7afd58148030de3e5e8cdd63969a30b3cbfd75e"}, // N13
-      {"salt": "26903334e154c915a351b94e609e26e0", "hash": "e68875549e8c95cd4698a1e6878cbcf326fc017f8d302d5fe9417824a9441b01"}, // N14
-      {"salt": "4141e927bb4b71d9b48c25c2b124f905", "hash": "defe35ab007fb1d3098f8f3dbe662ad08d27eb3baf35df674a2b9c3bf2d9ecc2"}, // N15
-      {"salt": "276072785876e8498e14502431eb0bae", "hash": "ce6634b5fece0f4f709e5ef5b294a7c5630173ad8021c9e3e3bf9e7fd307a4a6"}, // N16
-      {"salt": "2d71eaa9db713864c405a253eb63dcc5", "hash": "66304427edffd7871f124ab4e4d10556f19d6d584964ea8a592e4032072eddcd"}, // N17
-      {"salt": "7952e491b6e231c60ef8dc39b8bb3863", "hash": "10a7b33abdcce04426dc584b4b91e35611dc6c7711d0018231af02d307fc5bb2"} // N18
+      {"salt": "dbc52cc261e505757988a57b6e73d532", "hash": "fb70d44bf49a547f85f54cc2a540a29115f737f9ab0fca004ea60ff76d6d43b6"},
+      {"salt": "4c230d77ba4abd5b41344d42d8a15f75", "hash": "f363548abc4f043aeb7cb209d75345ddae464bc2b36f3426f7d05d43e3eb2d3e"},
+      {"salt": "fcf85f5500cfd61b3ffc576caae3eed5", "hash": "2d31e3d07cefb35de79070da25ebcd15ceaae1bd44278a4e699fc6b425ae11b8"},
+      {"salt": "aa8593bc35fc21fd64589614649c395d", "hash": "d76b96f3e533f72e3e9c2defb8de87eb4d42b7a1f9a088aa45b3bdca075c822b"},
+      {"salt": "0bc3195ca800c39390cb386817ac556a", "hash": "ae126c688b7d2ece6b85f6dfcca8a7b88b1cdb64f0a6d4d180ee1ffd0e940c89"},
+      {"salt": "3c13622d5704bb0a21b21da2ba71de39", "hash": "468f06ec016f9328d3be4f3a0f2de2ee9cbfb9088b2301f884a3a17ea5054331"},
+      {"salt": "f7376236d68ab2fe5bd910f515ca2f2e", "hash": "d0b01468d890af339ca1b23bea6829a07d1b4ad8256b51504938d08bc02eecd5"},
+      {"salt": "1dfc4e3c0ba1f6711d6801925d516c62", "hash": "b181ec8f696c73399c9ad90def9ed0ba52518be07d5f8dd46d6f402c8d86b197"},
+      {"salt": "808574ba2cad013fe49ed8d3449f9c9c", "hash": "642c29ae9ebe158cddf8c82070f9663c3b475486950db006e13a7309aebcf906"},
+      {"salt": "c34497a137cceb0f39005c6006fe2439", "hash": "9d6db039c26e24c83c65a208e045ab2dd1467fcb5aa1d197fd7a24be53d91f25"},
+      {"salt": "625b789995c7e68b685ad101e839cac9", "hash": "24b9b90363a0183f686d06cc39be3486c91fd3c4cf224d6c8a8b44b586540fdd"},
+      {"salt": "ed59e4b936407da8dc63079fa3b677d5", "hash": "9fb674e7b8361db73fbeaeba8abe39960f4b38339aadf49150c2534203fd59ab"},
+      {"salt": "11e29a40a69cfe628bfcf3fe68129a0a", "hash": "d42e19aff08ff53643940b1ec01387f248b81acc86ed516b931a1575b5702e37"},
+      {"salt": "b7d8e622a2d63d7287daa56f2c56962d", "hash": "e1a8fe95da919c2f9010a0fff7afd58148030de3e5e8cdd63969a30b3cbfd75e"},
+      {"salt": "26903334e154c915a351b94e609e26e0", "hash": "e68875549e8c95cd4698a1e6878cbcf326fc017f8d302d5fe9417824a9441b01"},
+      {"salt": "4141e927bb4b71d9b48c25c2b124f905", "hash": "defe35ab007fb1d3098f8f3dbe662ad08d27eb3baf35df674a2b9c3bf2d9ecc2"},
+      {"salt": "276072785876e8498e14502431eb0bae", "hash": "ce6634b5fece0f4f709e5ef5b294a7c5630173ad8021c9e3e3bf9e7fd307a4a6"},
+      {"salt": "2d71eaa9db713864c405a253eb63dcc5", "hash": "66304427edffd7871f124ab4e4d10556f19d6d584964ea8a592e4032072eddcd"},
+      {"salt": "7952e491b6e231c60ef8dc39b8bb3863", "hash": "10a7b33abdcce04426dc584b4b91e35611dc6c7711d0018231af02d307fc5bb2"}
     ];
 
     let currentQuestion = 0;
@@ -948,7 +998,6 @@
     const progressSaveStatus = document.getElementById("progress-save-status");
     const restartDialog = document.getElementById("restart-dialog");
     const hintLevels = [1, 2, 3, 4, 5];
-    // 同じドメイン内に別の作品があっても、保存先が重ならないようにします。
     const progressStorageKey = "portable:progress:v1:" + new URL(".", window.location.href).pathname;
 
     const portableLayer = document.getElementById("portable-images");
@@ -1112,7 +1161,6 @@
         const dx = Math.abs(event.clientX - drag.startX);
         const dy = Math.abs(event.clientY - drag.startY);
         if (Math.max(dx, dy) < 8) return;
-        // 元の画像の上では縦スクロールを保ち、タップでも取り出せるようにします。
         if (event.pointerType === "touch" && dy > dx) { finishPortableDrag(); return; }
         drag.card = openPortableImage(drag.number, drag.source, event.clientX, event.clientY);
         drag.moved();
@@ -1181,7 +1229,6 @@
     function renderProgress() {
       clearPortableImages();
       resetClearExtras();
-      // 本編クリア画面は再利用するため、消す前に正解済み一覧の外へ戻します。
       normalClear.hidden = true;
       solvedQuestions.after(normalClear);
       solvedQuestions.replaceChildren();
@@ -1205,7 +1252,6 @@
     document.getElementById("confirm-restart").addEventListener("click", function() {
       restartDialog.close();
       try {
-        // この作品の進捗だけを消します。
         window.localStorage.removeItem(progressStorageKey);
       } catch {
         progressSaveStatus.dataset.state = "error";
@@ -1242,7 +1288,6 @@
           viewed = item;
         }
       }
-      // 最後の問題が短い場合は、上端まで寄せられなくても現在位置にします。
       if (Math.ceil(window.scrollY + window.innerHeight) >= document.documentElement.scrollHeight - 2) {
         viewed = questionJumpLinks[questionJumpLinks.length - 1];
       }
@@ -1260,7 +1305,6 @@
       questionJumpList.replaceChildren();
       questionJumpLinks = [];
 
-      // すでに表示された問題だけを、例題から順に並べます。
       for (let number = 0; number <= Math.min(currentQuestion, answerChecks.length - 1); number++) {
         const solved = number < currentQuestion;
         const targetId = solved ? (number === 18 ? "clear-screen" : "question-" + number) : "game";
@@ -1291,12 +1335,10 @@
     window.addEventListener("resize", scheduleJumpUpdate);
     document.addEventListener("load", scheduleJumpUpdate, true);
 
-    // portableの背景画像に、実際に押せるかな入力キーを重ねます。
     const keyboard = document.getElementById("image-keyboard");
     const panelKeys = document.getElementById("panel-keys");
     let questionFitFrame = 0;
 
-    // PCでは、問題の上端から入力パネルの下端までを画面高に合わせます。
     function fitCurrentQuestion() {
       questionFitFrame = 0;
       if (!window.matchMedia("(min-width: 900px)").matches) {
@@ -1309,7 +1351,6 @@
       const image = questionImage.getBoundingClientRect();
       const panel = keyboard.getBoundingClientRect();
       const otherHeight = panel.bottom - card.top - image.height;
-      // 非常に低い画面でも問題画像を小さくしすぎないよう、下限を設けます。
       const imageHeight = Math.max(220, Math.floor(window.innerHeight - otherHeight - 32));
       questionImage.style.maxHeight = imageHeight + "px";
     }
@@ -1375,7 +1416,6 @@
 
     function makePanelElement(row, column, label, heightRows = 1, widthColumns = 1, isButton = true) {
       const element = document.createElement(isButton ? "button" : "span");
-      // 文字12列＋操作2列。左端の列を除いた分、各キーの幅を広げます。
       const columnStep = 834.5 / 14;
       element.className = "panel-key";
       element.style.left = ((17 + column * columnStep) / 868 * 100) + "%";
@@ -1411,12 +1451,10 @@
         }
       }
 
-      // 以前の4つの文字種切り替えを、2行×2列の「かな」表示にまとめます。
       const kana = makePanelElement(0, 12, "かな", 2, 2, false);
       kana.classList.add("panel-kana");
       kana.textContent = "かな";
 
-      // Enterは2行×2列、その下にClearとBSを横に並べます。
       const backspace = makePanelElement(4, 13, "1文字削除");
       backspace.classList.add("panel-control", "panel-delete");
       backspace.innerHTML = '<span><span class="panel-symbol" aria-hidden="true">⌫</span><span class="panel-control-word" aria-hidden="true">BS</span></span>';
@@ -1450,7 +1488,6 @@
       sizePanel();
     }
 
-    // SHA-256。外部ライブラリーや通信を使わず、ローカルのHTMLでも照合できます。
     function sha256(value) {
       const constants = [
         0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
@@ -1509,7 +1546,6 @@
         .toLowerCase();
     }
 
-    // 現在の問題のヒントだけを、このページ内で開きます。
     function resetInlineHints() {
       const hintCount = currentQuestion === 18 ? 5 : 2;
       for (const level of hintLevels) {
@@ -1540,7 +1576,6 @@
         image.hidden = false;
         error.hidden = true;
         image.alt = getQuestionTitle(currentQuestion) + "のヒント" + level;
-        // 例：N18H.png、N18H2.png、N18H3.png、N18H4.png、N18H5.png。
         image.src = "Images/N" + currentQuestion + "H" +
           (level === 1 ? "" : level) + "." + imageExtension;
       });
@@ -1603,7 +1638,6 @@
     }
 
     function keepAnswerPosition(section, position) {
-      // 次の問題へ移った入力欄からフォーカスを外し、正解した場所に残します。
       section.tabIndex = -1;
       section.focus({ preventScroll: true });
       window.scrollTo({ left: position.left, top: position.top, behavior: "instant" });
@@ -1613,7 +1647,6 @@
       const name = "N" + number;
       const title = getQuestionTitle(number);
 
-      // 正解した問題を、末尾にAが付く画像に置き換えて残します。
       const solvedSection = document.createElement("section");
       solvedSection.id = "question-" + number;
       solvedSection.className = "question-card solved-question";
@@ -1641,7 +1674,6 @@
       solvedSection.append(header, solvedImage);
       solvedQuestions.appendChild(solvedSection);
 
-      // 最終問題の直後に本編クリア画像を挟み、その下へEX問題を表示します。
       if (number === 17) {
         normalClear.hidden = false;
         solvedQuestions.appendChild(normalClear);
@@ -1664,7 +1696,6 @@
 
       const position = { left: window.scrollX, top: window.scrollY };
 
-      // EX問題はN18A.pngを使わず、EXClear.pngに切り替えます。
       if (currentQuestion === 18) {
         resetInlineHints();
         currentQuestion++;
@@ -1679,7 +1710,6 @@
       const solvedSection = appendSolvedQuestion(currentQuestion);
       currentQuestion++;
       saveProgress();
-      // 待ち時間や次へ進むボタンを挟まず、次の問題を表示します。
       showQuestion();
       keepAnswerPosition(solvedSection, position);
     }
