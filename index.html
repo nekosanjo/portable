@@ -178,6 +178,12 @@
     .author-profile-social:hover { color: var(--ink); }
     .author-profile-bio { margin: 24px 0 0; font-size: 20px; line-height: 1.9; overflow-wrap: anywhere; }
     .author-profile-bio span { display: block; }
+    .image-loading-dialog { position: fixed; inset: 0; width: min(480px, calc(100% - 32px)); height: fit-content; max-height: calc(100dvh - 32px); margin: auto; padding: 26px; overflow-y: auto; border: 2px solid var(--ink); border-radius: 12px; color: var(--ink); background: var(--paper); text-align: center; }
+    .image-loading-dialog::backdrop { background: #2f394980; }
+    .image-loading-dialog h2 { margin: 0 0 18px; font-size: 26px; line-height: 1.5; }
+    .image-loading-dialog p { margin: 16px 0 0; font-size: 18px; line-height: 1.8; }
+    .image-loading-progress { display: block; width: 100%; height: 18px; accent-color: var(--teal); }
+    .image-loading-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 22px; }
 
     .intro { padding: 32px 0 30px; }
 
@@ -639,6 +645,8 @@
       .author-profile-name { font-size: 24px; }
       .author-profile-social { font-size: 18px; }
       .author-profile-bio { font-size: 18px; }
+      .image-loading-dialog { padding: 20px; }
+      .image-loading-dialog h2 { font-size: 24px; }
       .brand { font-size: 13px; gap: 11px; }
       .brand-mark { width: 68px; height: 38px; font-size: 18px; }
       .intro { padding: 22px 0 24px; }
@@ -678,6 +686,17 @@
 </head>
 
 <body>
+  <dialog id="image-loading-dialog" class="image-loading-dialog" aria-labelledby="image-loading-title" aria-describedby="image-loading-message">
+    <h2 id="image-loading-title">画像を読み込んでいます</h2>
+    <progress id="image-loading-progress" class="image-loading-progress" value="0" max="1" aria-label="画像の読み込み状況"></progress>
+    <p id="image-loading-count">0 / 0</p>
+    <p id="image-loading-message" role="status">はじめに、すべての画像を準備しています。</p>
+    <div id="image-loading-actions" class="image-loading-actions" hidden>
+      <button id="image-loading-retry" class="dialog-button" type="button">再試行</button>
+      <button id="image-loading-continue" class="dialog-button" type="button">そのまま始める</button>
+    </div>
+  </dialog>
+
   <nav class="question-jump" aria-label="問題への移動と画像の操作">
     <p class="question-jump-title">問題</p>
     <ol id="question-jump-list" class="question-jump-list"></ol>
@@ -901,6 +920,159 @@
   <script>
     const imageExtension = "png";
 
+    const preloadedImages = new Map();
+    const imageLoadingDialog = document.getElementById("image-loading-dialog");
+    const imageLoadingTitle = document.getElementById("image-loading-title");
+    const imageLoadingProgress = document.getElementById("image-loading-progress");
+    const imageLoadingCount = document.getElementById("image-loading-count");
+    const imageLoadingMessage = document.getElementById("image-loading-message");
+    const imageLoadingActions = document.getElementById("image-loading-actions");
+    const imageLoadingRetry = document.getElementById("image-loading-retry");
+    const imageLoadingContinue = document.getElementById("image-loading-continue");
+    const imagePreloadState = { loaded: new Set(), failed: new Set(), total: 0, running: false };
+    let initialImagesReady = false;
+    let finishingImageLoad = false;
+
+    function getPreloadedImage(path) {
+      const url = new URL(path, document.baseURI).href;
+      let image = preloadedImages.get(url);
+      if (!image) {
+        image = new Image();
+        image.decoding = "async";
+        image.fetchPriority = "low";
+        preloadedImages.set(url, image);
+        image.src = url;
+      }
+      return image;
+    }
+
+    function questionImagePaths(number) {
+      const paths = [];
+      if (number < answerChecks.length) {
+        paths.push("Images/N" + number + "." + imageExtension);
+        if (number < 18) {
+          paths.push("Images/N" + number + "A." + imageExtension);
+          paths.push("Images/N" + (number + 1) + "." + imageExtension);
+        }
+      }
+      if (number === 17 || number >= answerChecks.length) paths.push("Images/Clear.png");
+      if (number >= 18) paths.push("Images/EXClear.png");
+      return paths;
+    }
+
+    function allImagePaths() {
+      const paths = new Set();
+      const add = path => { if (path) paths.add(new URL(path, document.baseURI).href); };
+      for (const image of document.images) add(image.getAttribute("src") || image.dataset.src);
+      for (let number = 0; number < answerChecks.length; number++) {
+        add("Images/N" + number + "." + imageExtension);
+        if (number < 18) add("Images/N" + number + "A." + imageExtension);
+        const count = number === 18 ? 5 : 2;
+        for (let level = 1; level <= count; level++) {
+          add("Images/N" + number + "H" + (level === 1 ? "" : level) + "." + imageExtension);
+        }
+      }
+      const first = questionImagePaths(currentQuestion).map(path => new URL(path, document.baseURI).href);
+      return Array.from(new Set([...first.filter(path => paths.has(path)), ...paths]));
+    }
+
+    function loadPreloadImage(path) {
+      const image = getPreloadedImage(path);
+      if (image.complete && image.naturalWidth > 0) return Promise.resolve(true);
+      return new Promise(resolve => {
+        let settled = false;
+        const finish = loaded => {
+          if (settled) return;
+          settled = true;
+          clearTimeout(timer);
+          image.removeEventListener("load", loadedHandler);
+          image.removeEventListener("error", errorHandler);
+          resolve(loaded);
+        };
+        const loadedHandler = () => finish(image.naturalWidth > 0);
+        const errorHandler = () => finish(false);
+        const timer = setTimeout(() => finish(false), 20000);
+        image.addEventListener("load", loadedHandler);
+        image.addEventListener("error", errorHandler);
+        if (image.complete) {
+          if (image.naturalWidth > 0) finish(true);
+          else image.src = new URL(path, document.baseURI).href;
+        }
+      });
+    }
+
+    async function warmQuestionImages() {
+      await Promise.allSettled(questionImagePaths(currentQuestion).map(async path => {
+        const image = getPreloadedImage(path);
+        if (image.complete && image.naturalWidth > 0 && typeof image.decode === "function") await image.decode();
+      }));
+    }
+
+    function updateImageLoadingProgress() {
+      imageLoadingProgress.max = imagePreloadState.total;
+      imageLoadingProgress.value = imagePreloadState.loaded.size;
+      imageLoadingCount.textContent = imagePreloadState.loaded.size + " / " + imagePreloadState.total;
+    }
+
+    async function finishInitialImageLoading() {
+      if (initialImagesReady || finishingImageLoad) return;
+      finishingImageLoad = true;
+      imageLoadingRetry.disabled = true;
+      imageLoadingContinue.disabled = true;
+      await warmQuestionImages();
+      initialImagesReady = true;
+      renderProgress();
+      imageLoadingDialog.close();
+    }
+
+    async function preloadAllImages(paths) {
+      if (imagePreloadState.running || initialImagesReady) return;
+      imagePreloadState.running = true;
+      imageLoadingActions.hidden = true;
+      imageLoadingRetry.disabled = true;
+      imageLoadingContinue.disabled = true;
+      imageLoadingTitle.textContent = "画像を読み込んでいます";
+      imageLoadingMessage.textContent = "はじめに、すべての画像を準備しています。";
+      if (!paths) {
+        paths = allImagePaths();
+        imagePreloadState.total = paths.length;
+      }
+      for (const path of paths) imagePreloadState.failed.delete(path);
+      if (!imageLoadingDialog.open) imageLoadingDialog.showModal();
+      updateImageLoadingProgress();
+      let next = 0;
+      await Promise.all(Array.from({ length: Math.min(6, paths.length) }, async () => {
+        while (next < paths.length) {
+          const path = paths[next++];
+          const loaded = await loadPreloadImage(path);
+          if (loaded) imagePreloadState.loaded.add(path);
+          else imagePreloadState.failed.add(path);
+          updateImageLoadingProgress();
+        }
+      }));
+      imagePreloadState.running = false;
+      if (!imagePreloadState.failed.size) {
+        await finishInitialImageLoading();
+      } else {
+        imageLoadingTitle.textContent = "一部の画像を読み込めませんでした";
+        imageLoadingMessage.textContent = imagePreloadState.failed.size +
+          "枚の画像を読み込めませんでした。通信状態を確認して再試行するか、そのまま始められます。";
+        imageLoadingActions.hidden = false;
+        imageLoadingRetry.disabled = false;
+        imageLoadingContinue.disabled = false;
+      }
+    }
+
+    imageLoadingDialog.addEventListener("cancel", function(event) {
+      event.preventDefault();
+      finishInitialImageLoading();
+    });
+    imageLoadingDialog.addEventListener("close", function() {
+      if (!initialImagesReady) finishInitialImageLoading();
+    });
+    imageLoadingRetry.addEventListener("click", () => preloadAllImages(Array.from(imagePreloadState.failed)));
+    imageLoadingContinue.addEventListener("click", finishInitialImageLoading);
+
     const authorProfileButton = document.getElementById("author-profile-button");
     const authorProfileDialog = document.getElementById("author-profile-dialog");
     authorProfileButton.addEventListener("click", function() {
@@ -1116,6 +1288,8 @@
     }
 
     function enablePortableImage(source, number) {
+      if (source.dataset.portableReady) return;
+      source.dataset.portableReady = "true";
       source.classList.add("portable-source");
       source.draggable = false;
       source.tabIndex = 0;
@@ -1635,6 +1809,7 @@
       result.textContent = "";
       updateQuestionNavigation();
       scheduleQuestionFit();
+      if (initialImagesReady) warmQuestionImages();
     }
 
     function keepAnswerPosition(section, position) {
@@ -1664,9 +1839,8 @@
       state.className = "solved-state";
       state.textContent = "正解";
 
-      const solvedImage = document.createElement("img");
+      const solvedImage = getPreloadedImage("Images/" + name + "A." + imageExtension);
       solvedImage.className = "question-image";
-      solvedImage.src = "Images/" + name + "A." + imageExtension;
       solvedImage.alt = title + "の正解後の画像";
       enablePortableImage(solvedImage, number);
 
@@ -1684,7 +1858,7 @@
     function checkAnswer(event) {
       event.preventDefault();
 
-      if (event.isComposing || currentQuestion >= answerChecks.length) return;
+      if (!initialImagesReady || event.isComposing || currentQuestion >= answerChecks.length) return;
 
       const answer = normalizeAnswer(answerInput.value);
       const check = answerChecks[currentQuestion];
@@ -1718,6 +1892,7 @@
     buildInputPanel();
     currentQuestion = loadProgress();
     renderProgress();
+    preloadAllImages();
   </script>
 </body>
 </html>
