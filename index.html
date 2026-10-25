@@ -727,16 +727,14 @@
       <summary class="notice-title"><h2 id="notice-title">遊ぶ前に</h2></summary>
       <div class="notice-content">
         <div class="notice-block">
-          <p>VRChatで公開した謎解きのWeb版です。<strong>謎の内容は共通で、VRChatの知識は不要</strong>です。</p>
+          <p>VRChatで公開した謎解きのWeb版です。<strong>謎解きの内容は共通ですが、VRChatの知識は不要</strong>です。</p>
           <ul>
             <li><strong>無料・登録不要</strong>／目安1〜2時間（時間制限なし）</li>
             <li>例題を含む<strong>全19問</strong>。最終問題で本編クリア、その先にEX問題があります。</li>
-            <li>答えは<strong>すべてひらがな</strong>で。英単語もひらがなに直し、選択問題は<strong>答えの言葉だけ</strong>を入力してください。</li>
-            <li><strong>ヒントは入力パネルの下</strong>、見返しは右側の問題番号から。</li>
+            <li>答えは<strong>すべてひらがな</strong>で入力してください。英単語もひらがなに直し、選択問題は<strong>答えの言葉だけ</strong>を入力してください。</li>
+            <li><strong>ヒントは入力パネルの下にあります。</strong>前の問題の見返しは右側の問題番号から行うと簡単です。</li>
             <li><strong>正解画像はドラッグ（スマホはタップ）で小さくして持ち運べます。</strong>右側の「戻す」でまとめて戻せます。</li>
-            <li>スマートフォン・PC対応。1人でも、複数人で相談しながらでも遊べます。必要ならメモ用の紙とペンをご用意ください。</li>
             <li><strong>虫眼鏡マーク</strong>がある問題は知識を使います。分からないときは検索をおすすめします。</li>
-            <li>正しい答えで進まない場合は、ページを再読み込みしてください。</li>
           </ul>
         </div>
         <details class="notice-details">
@@ -749,8 +747,8 @@
             <section class="notice-block" aria-labelledby="notice-sharing">
               <h3 id="notice-sharing">配信・感想の投稿</h3>
               <ul>
-                <li><strong>動画投稿・実況配信OK</strong>。タイトルや概要欄に「ネタバレあり」と明記してください。</li>
-                <li>SNSでは、問題・解答・ヒントの画像や、答え・解法が分かる投稿はお控えください。<strong>タイトル・本編クリア・EXクリア画像は投稿OK</strong>です。</li>
+                <li><strong>動画投稿・実況配信OK</strong>。</li>
+                <li>SNSでは、問題・解答・ヒントの画像や、答え・解法が分かる投稿はお控えください。</li>
                 <li>感想やクリア報告は<a href="https://x.com/hashtag/nazo_ptbl" target="_blank" rel="noopener noreferrer">#nazo_ptbl</a>でどうぞ。</li>
               </ul>
             </section>
@@ -764,7 +762,7 @@
     <section id="normal-clear" class="clear-screen" aria-label="本編クリア" hidden>
       <h2 class="visually-hidden">本編クリア！</h2>
       <img class="clear-image" src="Images/Clear.png" alt="portable Clear!!">
-      <p class="clear-caption">本編クリア！ 続けてEX問題に挑戦できます。</p>
+      <p class="clear-caption">本編クリア！おめでとうございます！ 続けてEX問題に挑戦できます。</p>
       <div class="clear-actions">
         <a id="normal-clear-tweet" class="clear-tweet" href="https://x.com/intent/tweet"
            target="_blank" rel="noopener noreferrer" aria-label="本編クリアをポスト(ツイート)（𝕏(Twitter)の投稿画面を別タブで開く）">
@@ -849,9 +847,9 @@
     </section>
 
     <section id="clear-screen" class="clear-screen" aria-label="EXクリア" hidden>
-      <h2 class="visually-hidden">EX問題まで全問クリア！</h2>
+      <h2 class="visually-hidden">EX問題をクリア！</h2>
       <img class="clear-image" src="Images/EXClear.png" alt="portable EX Clear!!!">
-      <p class="clear-caption">EX問題までクリア！<br>最後まで遊んでいただき、ありがとうございました。</p>
+      <p class="clear-caption">EX問題をクリア！とてもすごい！<br>最後まで遊んでいただき、本当にありがとうございました！</p>
       <div class="clear-actions">
         <a id="ex-clear-tweet" class="clear-tweet" href="https://x.com/intent/tweet"
            target="_blank" rel="noopener noreferrer" aria-label="EXクリアをポスト(ツイート)（𝕏(Twitter)の投稿画面を別タブで開く）">
@@ -903,8 +901,9 @@
     </div>
     <p id="author-profile-bio" class="author-profile-bio">
       <span>VRChatで謎解きを作っています。</span>
-      <span>Web謎『portable』の作者です。</span>
-      <span>どうぞ楽しんでいってください。</span>
+      <span>代表作は【謎解きワールド】portableです。</span>
+      <span>どうぞ楽しんで解いてください！</span>
+      <span>(この画面は謎解きの内容と無関係です。)</span>
     </p>
   </dialog>
 
@@ -1109,21 +1108,16 @@
     }
 
     function setupClearTweets() {
-      const pageUrl = new URL(window.location.href);
-      pageUrl.search = "";
-      pageUrl.hash = "";
-      const isLocal = ["localhost", "127.0.0.1", "[::1]"].includes(pageUrl.hostname) ||
-        /\.(?:local|localhost)$/.test(pageUrl.hostname);
-      const includeUrl = /^(https?:)$/.test(pageUrl.protocol) && !isLocal;
+      const shareUrl = "https://nekosanjo.github.io/portable/";
       const tweets = [
-        ["normal-clear-tweet", "Web謎『portable』の本編をクリアしました！\n#nazo_ptbl"],
-        ["ex-clear-tweet", "Web謎『portable』のEX問題まで、すべてクリアしました！\n#nazo_ptbl"]
+        ["normal-clear-tweet", "Web謎『portable』の本編をクリアしました！すごい！\n#nazo_ptbl"],
+        ["ex-clear-tweet", "Web謎『portable』のEX問題をクリアしました！とてもすごい！\n#nazo_ptbl"]
       ];
 
       for (const [id, message] of tweets) {
         const intent = new URL("https://x.com/intent/tweet");
         intent.searchParams.set("text", message);
-        if (includeUrl) intent.searchParams.set("url", pageUrl.href);
+        intent.searchParams.set("url", shareUrl);
         document.getElementById(id).href = intent.href;
       }
       if ("ResizeObserver" in window) {
@@ -1863,7 +1857,7 @@
       const answer = normalizeAnswer(answerInput.value);
       const check = answerChecks[currentQuestion];
       if (sha256(check.salt + ":" + answer) !== check.hash) {
-        result.textContent = "答えが違うようです。もう一度考えてみましょう。";
+        result.textContent = "不正解です。";
         answerInput.setAttribute("aria-invalid", "true");
         return;
       }
