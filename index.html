@@ -189,7 +189,6 @@
     .author-profile-button:hover { background: #d9e7df; }
     .author-profile-button:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
     .author-profile-button-icon { display: block; width: 30px; height: 30px; border-radius: 50%; object-fit: cover; object-position: 50% 47%; }
-    .author-profile-button-short { display: none; }
     .author-profile-dialog { position: fixed; inset: 0; width: min(560px, calc(100% - 32px)); height: fit-content; max-height: calc(100dvh - 32px); margin: auto; padding: 26px; overflow-y: auto; border: 2px solid var(--ink); border-radius: 12px; color: var(--ink); background: var(--paper); }
     .author-profile-dialog::backdrop { background: #2f394980; }
     .author-profile-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid #c8c9c0; }
@@ -372,8 +371,6 @@
       --panel-radius: 10px;
     }
 
-    .mobile-answer-bar { display: contents; }
-    .mobile-answer-submit, .mobile-panel-toggle, .mobile-panel-control-label { display: none; }
 
     .panel-background {
       display: block;
@@ -675,103 +672,101 @@
     .image-viewer-body { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; background: #e7efea; touch-action: pan-x pan-y pinch-zoom; }
     .image-viewer-image { display: block; width: 100%; max-width: none; height: auto; margin: 0 auto; -webkit-user-drag: none; }
 
-    @media (max-width: 600px) {
-      .header-inner, .page-footer { width: calc(100% - 24px); }
-      .page-shell { width: calc(100% - 16px); }
-      .header-inner { min-height: 64px; flex-wrap: nowrap; gap: 8px; padding-block: 10px; }
-      .author-profile-button { margin-left: auto; min-height: 44px; gap: 6px; padding: 6px; font-size: 16px; }
-      .author-profile-button-label { display: none; }
-      .author-profile-button-short { display: inline; white-space: nowrap; }
-      .author-profile-dialog { width: calc(100% - 24px); padding: 18px; }
-      .author-profile-dialog-header { gap: 10px; }
-      .author-profile-dialog h2 { font-size: 24px; }
+    @media (max-width: 600px), (max-height: 600px) and (pointer: coarse) {
+      .header-inner, .page-footer { width: min(1040px, calc(100% - 24px)); }
+      .page-shell { width: min(1040px, calc(100% - 16px)); }
+      .author-profile-dialog { width: calc(100% - 24px); padding: 16px; }
+      .author-profile-dialog-header { gap: 10px; padding-bottom: 14px; }
+      .author-profile-dialog h2 { font-size: 20px; }
       .author-profile-close { padding-inline: 8px; }
-      .author-profile-identity { gap: 12px; }
+      .author-profile-identity { gap: 12px; margin-top: 18px; }
       .author-profile-identity > div { min-width: 0; }
-      .author-profile-avatar { width: 64px; height: 64px; }
-      .author-profile-name { font-size: clamp(20px, 6vw, 24px); }
-      .author-profile-social { font-size: 18px; }
-      .author-profile-bio { font-size: 18px; }
-      .image-loading-dialog { padding: 20px; }
-      .image-loading-dialog h2 { font-size: 24px; }
-      .brand { min-width: 0; font-size: 16px; gap: 8px; }
-      .brand-logo { width: clamp(118px, 37vw, 166px); }
-      .footer-logo { width: 92px; }
-      .brand-mark { width: 60px; height: 34px; font-size: 16px; }
-      .intro { padding: 16px 0 20px; }
-      .intro p { margin-top: 15px; font-size: 17px; }
-      .notice-title { padding: 12px 14px; font-size: 22px; }
-      .notice-content { padding: 18px 14px; }
-      .notice-block h3 { font-size: 20px; }
-      .notice-block p, .notice-block ul { font-size: 18px; }
-      .notice-details > summary { font-size: 20px; }
-      .notice-block + .notice-block { margin-top: 24px; padding-top: 20px; }
-      .clear-caption { padding: 16px; font-size: 24px; }
-      .clear-actions { padding: 0 6px 18px; }
-      .clear-tweet { padding: 10px 8px; font-size: 18px; }
-      .clear-extra summary { min-height: calc(3em + 24px); padding: 12px 10px; font-size: 20px; }
+      .author-profile-avatar { width: 60px; height: 60px; }
+      .author-profile-name { font-size: 20px; }
+      .author-profile-social { font-size: 16px; }
+      .author-profile-bio { margin-top: 18px; font-size: 16px; line-height: 1.8; }
+      .image-loading-dialog { padding: 18px; }
+      .image-loading-dialog h2 { font-size: 20px; }
+      .image-loading-dialog p { font-size: 16px; line-height: 1.7; }
+      .intro { padding: 14px 0 18px; }
+      .intro p { margin-top: 12px; font-size: 15px; }
+      .notice-title { padding: 12px 14px; font-size: 20px; }
+      .notice-content { padding: 16px 12px; }
+      .notice-block h3 { font-size: 18px; }
+      .notice-block p, .notice-block ul { font-size: 16px; line-height: 1.8; }
+      .notice-details > summary { font-size: 18px; }
+      .notice-block + .notice-block { margin-top: 20px; padding-top: 18px; }
+      .clear-caption { padding: 14px; font-size: 20px; line-height: 1.7; }
+      .clear-actions { padding: 0 6px 16px; }
+      .clear-tweet { padding: 10px 8px; font-size: 16px; }
+      .clear-extra summary { min-height: calc(3em + 24px); padding: 12px 10px; font-size: 18px; }
       .portable-card { width: 190px; }
-      .restart-dialog { padding: 20px; }
+      .restart-dialog { padding: 18px; }
+      .restart-dialog h2 { font-size: 20px; }
+      .restart-dialog p { font-size: 16px; }
+      .restart-button, .dialog-button { min-height: 46px; padding: 9px 16px; font-size: 16px; }
       .dialog-actions, .image-loading-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
-      .dialog-actions button, .image-loading-actions button { width: 100%; min-height: 52px; }
-      .progress-save-status { font-size: 17px; }
-      .question-header { min-height: 50px; }
-      .question-heading { min-width: 118px; padding: 10px; font-size: 24px; letter-spacing: .02em; }
-      .solved-state { padding-inline: 6px; gap: 8px; font-size: 22px; letter-spacing: .02em; }
-      .solved-state::before { width: 24px; height: 24px; font-size: 16px; }
-      .answer-form { padding: 16px 10px 12px; }
-      .inline-hints { padding: 18px 10px; }
+      .dialog-actions button, .image-loading-actions button { width: 100%; min-height: 46px; }
+      .progress-save-status { font-size: 15px; }
+      .question-header { min-height: 46px; }
+      .question-heading { min-width: 106px; padding: 8px 10px; font-size: 20px; letter-spacing: .02em; }
+      .solved-state { padding-inline: 8px; gap: 6px; font-size: 18px; letter-spacing: .02em; }
+      .solved-state::before { width: 20px; height: 20px; font-size: 14px; }
+      .answer-form { padding: 14px 10px 12px; }
+      .question-image-zoom { display: flex; align-items: center; justify-content: center; min-height: 44px; margin: 0 auto 8px; padding: 6px 14px; border: 1px solid #b7c3bb; border-radius: 6px; color: #386e66; background: #e7efea; font-size: 15px; line-height: 1.5; cursor: pointer; }
+      #question-image[hidden] ~ .question-image-zoom { display: none; }
+      .inline-hints { padding: 16px 10px; }
+      .inline-hints h3 { margin-bottom: 12px; font-size: 16px; }
       .inline-hint-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-      .inline-hint summary { min-height: 60px; padding: 10px 8px; gap: 6px; font-size: 17px; }
+      .inline-hint summary { min-height: 48px; padding: 8px 6px; gap: 4px; font-size: 15px; }
       .inline-hint summary::after { font-size: 18px; }
       .inline-hint-content { padding: 6px; }
-      .keyboard-help { margin-top: 12px; font-size: 17px; text-wrap: wrap; }
-      .question-card, .notice { margin-bottom: 24px; }
-      .page-footer { margin-top: 28px; font-size: 18px; letter-spacing: 0; }
-    }
-
-    @media (max-width: 600px), (max-height: 600px) and (pointer: coarse) {
-      .question-image-zoom { display: flex; align-items: center; justify-content: center; min-height: 44px; margin: 0 auto 8px; padding: 6px 14px; border: 1px solid #b7c3bb; border-radius: 6px; color: #386e66; background: #e7efea; font-size: 17px; line-height: 1.5; cursor: pointer; }
-      #question-image[hidden] ~ .question-image-zoom { display: none; }
-      .answer-form { padding: 16px 10px 12px; }
-      .image-keyboard { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 480px; aspect-ratio: auto; background: none; }
+      .hint-image-preview-caption { font-size: 14px; }
+      .hint-error { padding: 18px 8px; font-size: 15px; }
+      .image-error { padding: 28px 16px; font-size: 16px; }
+      .keyboard-help { margin-top: 10px; font-size: 15px; text-wrap: wrap; }
+      .answer-result { font-size: 16px; }
+      .question-card, .notice { margin-bottom: 22px; }
+      .page-footer { margin-top: 26px; font-size: 15px; letter-spacing: 0; }
+      .image-viewer-header { padding: 10px 12px; }
+      .image-viewer-header h2 { font-size: 18px; }
+      .image-viewer-tools button { font-size: 18px; }
+      .image-viewer-tools output { font-size: 16px; }
+      .image-viewer-tools #image-viewer-fit { font-size: 14px; }
+      .image-keyboard { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: var(--answer-panel-width); aspect-ratio: auto; background: none; }
       .panel-background { display: none; }
-      .mobile-answer-bar { position: sticky; top: 8px; top: max(8px, env(safe-area-inset-top, 0px)); z-index: 4; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 8px; padding-block: 4px; background: var(--paper); }
-      #answer { position: static; width: 100%; height: auto; min-height: 54px; padding: 10px 12px; border-radius: 8px; font-size: 18px; line-height: 1.5; }
-      .mobile-answer-submit { display: block; min-width: 88px; min-height: 54px; padding: 10px 12px; border: 2px solid var(--teal); border-radius: 8px; color: var(--paper); background: var(--teal); font-size: 18px; line-height: 1.5; cursor: pointer; touch-action: manipulation; }
-      .mobile-panel-toggle { display: block; grid-column: 1 / -1; min-height: 44px; padding: 8px 12px; border: 1px solid #b7c3bb; border-radius: 8px; color: #386e66; background: #e7efea; font-size: 17px; line-height: 1.5; cursor: pointer; touch-action: manipulation; }
-      .mobile-answer-submit:focus-visible, .mobile-panel-toggle:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
-      .panel-keys { position: static; display: none; pointer-events: auto; }
-      .is-mobile-panel-open .panel-keys { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
-      .panel-keys .panel-key { position: static; inset: auto !important; width: auto !important; height: auto !important; min-height: 44px; border-radius: 8px; font-size: 20px; }
-      .panel-keys .panel-kana, .panel-keys .panel-enter { display: none; }
-      .panel-keys .panel-clear { grid-column: span 3; }
-      .panel-keys .panel-backspace { grid-column: span 2; }
-      .panel-delete > span:not(.mobile-panel-control-label) { display: none; }
-      .panel-delete .mobile-panel-control-label { display: block; font-size: 16px; line-height: 1.5; }
+      #answer { position: static; width: 100%; height: auto; min-height: 44px; padding: 8px 10px; border-radius: 6px; font-size: 16px; line-height: 1.5; scroll-margin-top: 90px; }
+      .panel-keys { position: static; display: grid; grid-template-columns: repeat(14, minmax(0, 1fr)); grid-template-rows: repeat(5, 32px); gap: 2px; pointer-events: auto; }
+      .panel-keys .panel-key { position: static; inset: auto !important; width: auto !important; height: auto !important; min-height: 0; grid-row: var(--panel-row) / span var(--panel-row-span); grid-column: var(--panel-column) / span var(--panel-column-span); border-radius: 4px; font-size: var(--panel-key-font); }
+      .panel-keys .panel-control { font-size: var(--panel-control-font); }
+      .panel-keys .panel-enter { font-size: var(--panel-key-font); }
+      .panel-keys .panel-delete .panel-control-word { font-size: .55em; }
     }
 
     @media (max-width: 899px), (hover: none) and (pointer: coarse) {
-      body { padding-right: 0; padding-bottom: 84px; padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+      body { padding-right: 0; padding-bottom: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+      .site-header { position: sticky; top: 0; z-index: 32; padding-top: env(safe-area-inset-top, 0px); background: var(--paper); }
+      .header-inner { min-height: 60px; flex-wrap: nowrap; gap: 6px; padding-block: 8px; }
+      .brand { min-width: 0; gap: 6px; }
+      .brand-mark { width: 48px; height: 30px; font-size: 14px; }
+      .brand-logo { width: clamp(100px, 30vw, 140px); }
+      .footer-logo { width: 92px; }
+      .author-profile-button { flex-shrink: 0; width: 44px; min-width: 44px; min-height: 44px; gap: 0; margin-left: auto; padding: 5px; }
+      .author-profile-button-icon { width: 28px; height: 28px; }
+      .author-profile-button-label { display: none; }
       .question-jump-toggle {
-        position: fixed;
-        z-index: 32;
-        right: 12px;
-        right: max(12px, env(safe-area-inset-right, 0px));
-        bottom: 12px;
-        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
         display: inline-flex;
+        flex-shrink: 0;
         align-items: center;
         justify-content: center;
-        min-width: 112px;
-        min-height: 48px;
-        padding: 10px 14px;
+        min-width: 80px;
+        min-height: 44px;
+        padding: 8px 10px;
         border: 2px solid var(--ink);
-        border-radius: 10px;
+        border-radius: 8px;
         color: var(--paper);
         background: var(--ink);
-        box-shadow: 2px 3px 0 #2f39492b;
-        font-size: 18px;
+        font-size: 14px;
         line-height: 1.4;
         cursor: pointer;
         touch-action: manipulation;
@@ -780,24 +775,25 @@
       .question-jump {
         display: none;
         z-index: 31;
-        top: auto;
+        top: 80px;
+        top: calc(80px + env(safe-area-inset-top, 0px));
         right: 12px;
         right: max(12px, env(safe-area-inset-right, 0px));
-        bottom: 76px;
-        bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+        bottom: auto;
         width: min(184px, calc(100vw - 24px));
-        max-height: calc(100vh - 112px);
-        max-height: calc(100dvh - 112px - env(safe-area-inset-bottom, 0px));
+        max-height: calc(100vh - 96px);
+        max-height: calc(100dvh - 96px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
         padding: 10px;
         gap: 8px;
         transform: none;
         box-shadow: 3px 4px 12px #2f394933;
       }
       .question-jump.is-open { display: flex; }
-      .question-jump-title { flex-shrink: 0; font-size: 18px; }
+      .question-jump-title { flex-shrink: 0; font-size: 16px; }
       .question-jump-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; align-content: start; }
-      .question-jump-link { min-height: 44px; padding: 6px 2px; font-size: 18px; }
-      .portable-return-all { min-height: 44px; padding: 8px; font-size: 18px; }
+      .question-jump-link { min-height: 44px; padding: 6px 2px; font-size: 16px; }
+      .portable-return-all { min-height: 44px; padding: 8px; font-size: 16px; }
+      .question-card, .clear-screen { scroll-margin-top: 86px; scroll-margin-top: calc(86px + env(safe-area-inset-top, 0px)); }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -818,7 +814,6 @@
     </div>
   </dialog>
 
-  <button id="question-jump-toggle" class="question-jump-toggle" type="button" aria-controls="question-jump" aria-expanded="false" aria-label="問題一覧を開く">問題一覧</button>
   <nav id="question-jump" class="question-jump" aria-label="問題への移動と画像の操作">
     <p class="question-jump-title">問題</p>
     <ol id="question-jump-list" class="question-jump-list"></ol>
@@ -834,8 +829,8 @@
       <button id="author-profile-button" class="author-profile-button" type="button" aria-label="作者プロフィールを開く" aria-haspopup="dialog" aria-controls="author-profile-dialog" aria-expanded="false">
         <img class="author-profile-button-icon" src="Images/author-icon.png" width="30" height="30" alt="" aria-hidden="true">
         <span class="author-profile-button-label">作者プロフィール</span>
-        <span class="author-profile-button-short" aria-hidden="true">作者</span>
       </button>
+      <button id="question-jump-toggle" class="question-jump-toggle" type="button" aria-controls="question-jump" aria-expanded="false" aria-label="問題一覧を開く">問題一覧</button>
     </div>
   </header>
 
@@ -910,13 +905,9 @@
         <div id="image-keyboard" class="image-keyboard">
           <img class="panel-background" src="Images/input-panel.png" alt=""
                aria-hidden="true">
-          <div class="mobile-answer-bar">
-            <input id="answer" type="text" aria-label="答え" placeholder="答えを入力"
-                   autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go"
-                   required aria-describedby="result keyboard-help">
-            <button class="mobile-answer-submit" type="submit">解答する</button>
-            <button id="mobile-panel-toggle" class="mobile-panel-toggle" type="button" aria-expanded="false" aria-controls="panel-keys">かなパネルを開く</button>
-          </div>
+          <input id="answer" type="text" aria-label="答え" placeholder="答えを入力"
+                 autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go"
+                 required aria-describedby="result keyboard-help">
           <div id="panel-keys" class="panel-keys" role="group" aria-label="文字入力パネル"></div>
         </div>
         <p id="keyboard-help" class="keyboard-help">パネルを押して入力できます。入力欄から直接打ち込むこともできます。</p>
@@ -1870,6 +1861,10 @@
       const element = document.createElement(isButton ? "button" : "span");
       const columnStep = 834.5 / 14;
       element.className = "panel-key";
+      element.style.setProperty("--panel-row", row + 1);
+      element.style.setProperty("--panel-column", column + 1);
+      element.style.setProperty("--panel-row-span", heightRows);
+      element.style.setProperty("--panel-column-span", widthColumns);
       element.style.left = ((17 + column * columnStep) / 868 * 100) + "%";
       element.style.top = ((73 + row * 55.5) / 363 * 100) + "%";
       element.style.width = ((widthColumns * columnStep - 1.5) / 868 * 100) + "%";
@@ -1885,15 +1880,12 @@
 
     function buildInputPanel() {
       const compactInputLayout = window.matchMedia("(max-width: 600px), (max-height: 600px) and (pointer: coarse)");
-      const mobilePanelToggle = document.getElementById("mobile-panel-toggle");
-      const kanaButtons = new Map();
       for (let row = 0; row < 5; row++) {
         for (let column = 0; column < kanaRows[row].length; column++) {
           const text = kanaRows[row][column];
           const label = text === " " ? "空白" : text === "゛" ? "濁点" : text === "゜" ? "半濁点" : text;
           const button = makePanelElement(row, column, label);
           button.textContent = text;
-          kanaButtons.set(text, button);
           button.title = label;
           button.addEventListener("click", function() {
             if (text === "゛") {
@@ -1912,15 +1904,13 @@
       kana.textContent = "かな";
 
       const backspace = makePanelElement(4, 13, "1文字削除");
-      backspace.classList.add("panel-control", "panel-delete", "panel-backspace");
+      backspace.classList.add("panel-control", "panel-delete");
       backspace.innerHTML = '<span><span class="panel-symbol" aria-hidden="true">⌫</span><span class="panel-control-word" aria-hidden="true">BS</span></span>';
-      backspace.insertAdjacentHTML("beforeend", '<span class="mobile-panel-control-label" aria-hidden="true">1文字消す</span>');
       backspace.addEventListener("click", deletePanelCharacter);
 
       const clear = makePanelElement(4, 12, "すべて消去");
-      clear.classList.add("panel-control", "panel-delete", "panel-clear");
+      clear.classList.add("panel-control", "panel-delete");
       clear.innerHTML = '<span><span class="panel-symbol" aria-hidden="true">×</span><span class="panel-control-word" aria-hidden="true">Clear</span></span>';
-      clear.insertAdjacentHTML("beforeend", '<span class="mobile-panel-control-label" aria-hidden="true">すべて消す</span>');
       clear.addEventListener("click", clearPanelAnswer);
 
       const enter = makePanelElement(2, 12, "解答する", 2, 2);
@@ -1933,57 +1923,22 @@
         result.textContent = "";
       });
 
-      answerInput.addEventListener("blur", function() {
-        answerIsComposing = false;
-      });
-      answerInput.addEventListener("compositionstart", () => { answerIsComposing = true; });
-      answerInput.addEventListener("compositionend", () => { answerIsComposing = false; });
-
-      function setKanaPanelOpen(open) {
-        keyboard.classList.toggle("is-mobile-panel-open", open);
-        mobilePanelToggle.setAttribute("aria-expanded", String(open));
-        mobilePanelToggle.textContent = open ? "かなパネルを閉じる" : "かなパネルを開く";
-        if (!open && compactInputLayout.matches && panelKeys.contains(document.activeElement)) mobilePanelToggle.focus({ preventScroll: true });
-      }
-
-      mobilePanelToggle.addEventListener("click", function() {
-        const open = !keyboard.classList.contains("is-mobile-panel-open");
-        if (open && document.activeElement === answerInput) answerInput.blur();
-        setKanaPanelOpen(open);
-      });
-
-      const desktopKeys = Array.from(panelKeys.children);
-      const mobileLetters = Array.from([
-        "あいうえお", "かきくけこ", "さしすせそ", "たちつてと", "なにぬねの", "はひふへほ",
-        "まみむめも", "やゆよ゛゜", "らりるれろ", "わゐゑをん", "ぁぃぅぇぉ", "ゃゅょっー"
-      ].join(""));
-      const mobileKeys = [...mobileLetters.map(letter => kanaButtons.get(letter)), clear, backspace, kana, enter];
-
-      function syncInputLayout() {
-        const focused = document.activeElement;
-        for (const element of compactInputLayout.matches ? mobileKeys : desktopKeys) panelKeys.appendChild(element);
-        if (!compactInputLayout.matches) setKanaPanelOpen(false);
-        if (focused && panelKeys.contains(focused)) {
-          if (compactInputLayout.matches && !keyboard.classList.contains("is-mobile-panel-open")) mobilePanelToggle.focus({ preventScroll: true });
-          else focused.focus({ preventScroll: true });
-        }
-        sizePanel();
-      }
+      answerInput.addEventListener("blur", function() { answerIsComposing = false; });
+      answerInput.addEventListener("compositionstart", function() { answerIsComposing = true; });
+      answerInput.addEventListener("compositionend", function() { answerIsComposing = false; });
 
       function sizePanel() {
         const scale = keyboard.getBoundingClientRect().width / 868;
         const compact = compactInputLayout.matches;
-        keyboard.style.setProperty("--panel-key-font", (compact ? 20 : 36 * scale) + "px");
-        keyboard.style.setProperty("--panel-control-font", (compact ? 18 : 20 * scale) + "px");
-        keyboard.style.setProperty("--panel-input-font", (compact ? 18 : Math.max(16, 30 * scale)) + "px");
-        keyboard.style.setProperty("--panel-radius", (compact ? 8 : 10 * scale) + "px");
+        keyboard.style.setProperty("--panel-key-font", (compact ? Math.min(20, Math.max(10, 36 * scale)) : 36 * scale) + "px");
+        keyboard.style.setProperty("--panel-control-font", (compact ? Math.min(14, Math.max(10, 20 * scale)) : 20 * scale) + "px");
+        keyboard.style.setProperty("--panel-input-font", (compact ? 16 : Math.max(16, 30 * scale)) + "px");
+        keyboard.style.setProperty("--panel-radius", (10 * scale) + "px");
         scheduleQuestionFit();
       }
       if ("ResizeObserver" in window) new ResizeObserver(sizePanel).observe(keyboard);
       window.addEventListener("resize", sizePanel);
-      if (typeof compactInputLayout.addEventListener === "function") compactInputLayout.addEventListener("change", syncInputLayout);
-      else compactInputLayout.addListener(syncInputLayout);
-      syncInputLayout();
+      sizePanel();
     }
 
     function sha256(value) {
