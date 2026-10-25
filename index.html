@@ -142,7 +142,7 @@
       display: block;
       width: 166px;
       aspect-ratio: 1120 / 268;
-      background-image: url("images/Title.png");
+      background-image: url("Images/Title.png");
       background-size: 171.428571% auto;
       background-position: 50.625% 55.172414%;
       background-repeat: no-repeat;
@@ -681,7 +681,7 @@
   <main class="page-shell">
     <div class="intro">
       <h1 class="visually-hidden">portable</h1>
-      <img class="title-image" src="images/Title.png"
+      <img class="title-image" src="Images/Title.png"
            alt="謎解きワールド portable｜作：ねこさんじょう">
     </div>
 
@@ -728,7 +728,7 @@
     <!-- 最終問題の正解後、正解済みの問題の下へ移して表示します。 -->
     <section id="normal-clear" class="clear-screen" aria-label="本編クリア" hidden>
       <h2 class="visually-hidden">本編クリア！</h2>
-      <img class="clear-image" src="images/Clear.png" alt="portable Clear!!">
+      <img class="clear-image" src="Images/Clear.png" alt="portable Clear!!">
       <p class="clear-caption">本編クリア！ 続けてEX問題に挑戦できます。</p>
       <div class="clear-actions">
         <a id="normal-clear-tweet" class="clear-tweet" href="https://x.com/intent/tweet"
@@ -751,7 +751,7 @@
 
       <form id="answer-form" class="answer-form" onsubmit="checkAnswer(event)">
         <div id="image-keyboard" class="image-keyboard">
-          <img class="panel-background" src="images/input-panel.png" alt=""
+          <img class="panel-background" src="Images/input-panel.png" alt=""
                aria-hidden="true">
           <input id="answer" type="text" aria-label="答え" placeholder="答えを入力してください"
                  autocomplete="off" autocapitalize="off" spellcheck="false"
@@ -816,7 +816,7 @@
 
     <section id="clear-screen" class="clear-screen" aria-label="EXクリア" hidden>
       <h2 class="visually-hidden">EX問題まで全問クリア！</h2>
-      <img class="clear-image" src="images/EXClear.png" alt="portable EX Clear!!!">
+      <img class="clear-image" src="Images/EXClear.png" alt="portable EX Clear!!!">
       <p class="clear-caption">EX問題までクリア！<br>最後まで遊んでいただき、ありがとうございました。</p>
       <div class="clear-actions">
         <a id="ex-clear-tweet" class="clear-tweet" href="https://x.com/intent/tweet"
@@ -827,14 +827,14 @@
       <section class="clear-extras" aria-label="あとがきと制作協力">
         <details class="clear-extra">
           <summary>あとがき</summary>
-          <a class="clear-extra-image-link" href="images/Atogaki.png" target="_blank" rel="noopener noreferrer" aria-label="あとがきを大きく表示（別タブで開く）">
-            <img class="clear-extra-image" data-src="images/Atogaki.png" width="810" height="1080" alt="portableのあとがき">
+          <a class="clear-extra-image-link" href="Images/Atogaki.png" target="_blank" rel="noopener noreferrer" aria-label="あとがきを大きく表示（別タブで開く）">
+            <img class="clear-extra-image" data-src="Images/Atogaki.png" width="810" height="1080" alt="portableのあとがき">
           </a>
         </details>
         <details class="clear-extra">
           <summary>テストプレイ協力</summary>
-          <a class="clear-extra-image-link" href="images/Testplay.png" target="_blank" rel="noopener noreferrer" aria-label="テストプレイ協力者の画像を大きく表示（別タブで開く）">
-            <img class="clear-extra-image" data-src="images/Testplay.png" width="810" height="1080" alt="テストプレイ協力者一覧（敬称略）">
+          <a class="clear-extra-image-link" href="Images/Testplay.png" target="_blank" rel="noopener noreferrer" aria-label="テストプレイ協力者の画像を大きく表示（別タブで開く）">
+            <img class="clear-extra-image" data-src="Images/Testplay.png" width="810" height="1080" alt="テストプレイ協力者一覧（敬称略）">
           </a>
         </details>
       </section>
@@ -1541,7 +1541,7 @@
         error.hidden = true;
         image.alt = getQuestionTitle(currentQuestion) + "のヒント" + level;
         // 例：N18H.png、N18H2.png、N18H3.png、N18H4.png、N18H5.png。
-        image.src = "images/N" + currentQuestion + "H" +
+        image.src = "Images/N" + currentQuestion + "H" +
           (level === 1 ? "" : level) + "." + imageExtension;
       });
 
@@ -1591,7 +1591,7 @@
 
       imageError.hidden = true;
       questionImage.hidden = false;
-      questionImage.src = "images/" + name + "." + imageExtension;
+      questionImage.src = "Images/" + name + "." + imageExtension;
       questionImage.alt = getQuestionTitle(currentQuestion) + "の問題画像";
 
       answerInput.value = "";
@@ -1633,7 +1633,7 @@
 
       const solvedImage = document.createElement("img");
       solvedImage.className = "question-image";
-      solvedImage.src = "images/" + name + "A." + imageExtension;
+      solvedImage.src = "Images/" + name + "A." + imageExtension;
       solvedImage.alt = title + "の正解後の画像";
       enablePortableImage(solvedImage, number);
 
