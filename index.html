@@ -48,6 +48,7 @@
 
     * { box-sizing: border-box; }
     [hidden] { display: none !important; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
 
     body {
       margin: 0;
@@ -62,6 +63,8 @@
     }
 
     button, input { font: inherit; }
+
+    .question-jump-toggle { display: none; }
 
     .question-jump {
       position: fixed;
@@ -186,6 +189,7 @@
     .author-profile-button:hover { background: #d9e7df; }
     .author-profile-button:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
     .author-profile-button-icon { display: block; width: 30px; height: 30px; border-radius: 50%; object-fit: cover; object-position: 50% 47%; }
+    .author-profile-button-short { display: none; }
     .author-profile-dialog { position: fixed; inset: 0; width: min(560px, calc(100% - 32px)); height: fit-content; max-height: calc(100dvh - 32px); margin: auto; padding: 26px; overflow-y: auto; border: 2px solid var(--ink); border-radius: 12px; color: var(--ink); background: var(--paper); }
     .author-profile-dialog::backdrop { background: #2f394980; }
     .author-profile-dialog-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 18px; border-bottom: 1px solid #c8c9c0; }
@@ -339,6 +343,8 @@
     }
 
     #question-image { object-fit: contain; }
+    #question-image { cursor: zoom-in; }
+    .question-image-zoom { display: none; }
 
     .portable-source { cursor: grab; user-select: none; -webkit-user-drag: none; touch-action: pan-y pinch-zoom; }
     .portable-source:focus-visible { outline: 3px solid var(--teal); outline-offset: -4px; }
@@ -365,6 +371,9 @@
       --panel-input-font: 30px;
       --panel-radius: 10px;
     }
+
+    .mobile-answer-bar { display: contents; }
+    .mobile-answer-submit, .mobile-panel-toggle, .mobile-panel-control-label { display: none; }
 
     .panel-background {
       display: block;
@@ -502,6 +511,9 @@
     .inline-hint summary:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
 
     .inline-hint-content { padding: 12px; }
+    .hint-image-preview { display: block; width: 100%; margin: 0; padding: 0; border: 0; color: var(--ink); background: var(--paper); cursor: zoom-in; }
+    .hint-image-preview:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+    .hint-image-preview-caption { display: flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 6px; border: 1px solid #b7c3bb; border-radius: 5px; color: #386e66; background: #e7efea; font-size: 16px; line-height: 1.5; }
     .inline-hint-image {
       display: block;
       width: 100%;
@@ -648,31 +660,48 @@
 
     .page-footer .footer-logo { margin-left: auto; }
 
+    .image-viewer { position: fixed; inset: 0; width: min(900px, calc(100% - 24px)); height: calc(100vh - 24px); height: calc(100dvh - 24px); max-height: 900px; margin: auto; padding: 0; overflow: hidden; border: 2px solid var(--ink); border-radius: 10px; color: var(--ink); background: var(--paper); }
+    .image-viewer[open] { display: flex; flex-direction: column; }
+    .image-viewer::backdrop { background: #2f3949a6; }
+    .image-viewer-header { display: flex; flex-shrink: 0; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #c8c9c0; }
+    .image-viewer-header h2 { min-width: 0; margin: 0; font-size: 22px; line-height: 1.5; }
+    .image-viewer-header .dialog-button { flex-shrink: 0; min-height: 44px; padding: 8px 12px; }
+    .image-viewer-tools { display: flex; flex-shrink: 0; align-items: center; justify-content: center; gap: 8px; padding: 10px; }
+    .image-viewer-tools button { min-width: 44px; min-height: 44px; padding: 6px 10px; border: 1px solid var(--ink); border-radius: 6px; color: var(--ink); background: #e7efea; font-size: 20px; line-height: 1.4; cursor: pointer; touch-action: manipulation; }
+    .image-viewer-tools button:disabled { opacity: .4; cursor: default; }
+    .image-viewer-tools button:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+    .image-viewer-tools output { min-width: 56px; font-size: 18px; text-align: center; }
+    .image-viewer-tools #image-viewer-fit { min-width: 60px; font-size: 16px; }
+    .image-viewer-body { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; background: #e7efea; touch-action: pan-x pan-y pinch-zoom; }
+    .image-viewer-image { display: block; width: 100%; max-width: none; height: auto; margin: 0 auto; -webkit-user-drag: none; }
+
     @media (max-width: 600px) {
-      body { padding-right: 52px; }
-      .question-jump { right: 4px; width: 44px; padding: 6px 3px; gap: 6px; border-width: 1px; border-radius: 7px; }
-      .question-jump-title { font-size: 13px; }
-      .question-jump-link { min-height: 32px; font-size: 14px; }
-      .header-inner, .page-shell, .page-footer { width: calc(100% - 28px); }
-      .header-inner { min-height: 72px; flex-wrap: wrap; gap: 12px; padding-block: 12px; }
-      .author-profile-button { margin-left: auto; padding: 8px 10px; font-size: 17px; }
-      .author-profile-dialog { padding: 20px; }
+      .header-inner, .page-footer { width: calc(100% - 24px); }
+      .page-shell { width: calc(100% - 16px); }
+      .header-inner { min-height: 64px; flex-wrap: nowrap; gap: 8px; padding-block: 10px; }
+      .author-profile-button { margin-left: auto; min-height: 44px; gap: 6px; padding: 6px; font-size: 16px; }
+      .author-profile-button-label { display: none; }
+      .author-profile-button-short { display: inline; white-space: nowrap; }
+      .author-profile-dialog { width: calc(100% - 24px); padding: 18px; }
       .author-profile-dialog-header { gap: 10px; }
       .author-profile-dialog h2 { font-size: 24px; }
       .author-profile-close { padding-inline: 8px; }
-      .author-profile-identity { gap: 14px; }
-      .author-profile-avatar { width: 80px; height: 80px; }
-      .author-profile-name { font-size: 24px; }
+      .author-profile-identity { gap: 12px; }
+      .author-profile-identity > div { min-width: 0; }
+      .author-profile-avatar { width: 64px; height: 64px; }
+      .author-profile-name { font-size: clamp(20px, 6vw, 24px); }
       .author-profile-social { font-size: 18px; }
       .author-profile-bio { font-size: 18px; }
       .image-loading-dialog { padding: 20px; }
       .image-loading-dialog h2 { font-size: 24px; }
-      .brand { font-size: 13px; gap: 11px; }
-      .brand-mark { width: 68px; height: 38px; font-size: 18px; }
-      .intro { padding: 22px 0 24px; }
+      .brand { min-width: 0; font-size: 16px; gap: 8px; }
+      .brand-logo { width: clamp(118px, 37vw, 166px); }
+      .footer-logo { width: 92px; }
+      .brand-mark { width: 60px; height: 34px; font-size: 16px; }
+      .intro { padding: 16px 0 20px; }
       .intro p { margin-top: 15px; font-size: 17px; }
-      .notice-title { padding: 14px 16px; font-size: 24px; }
-      .notice-content { padding: 20px 16px; }
+      .notice-title { padding: 12px 14px; font-size: 22px; }
+      .notice-content { padding: 18px 14px; }
       .notice-block h3 { font-size: 20px; }
       .notice-block p, .notice-block ul { font-size: 18px; }
       .notice-details > summary { font-size: 20px; }
@@ -680,23 +709,95 @@
       .clear-caption { padding: 16px; font-size: 24px; }
       .clear-actions { padding: 0 6px 18px; }
       .clear-tweet { padding: 10px 8px; font-size: 18px; }
-      .clear-extra summary { min-height: calc(3em + 28px); padding: 14px 16px; font-size: 22px; }
+      .clear-extra summary { min-height: calc(3em + 24px); padding: 12px 10px; font-size: 20px; }
       .portable-card { width: 190px; }
       .restart-dialog { padding: 20px; }
+      .dialog-actions, .image-loading-actions { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+      .dialog-actions button, .image-loading-actions button { width: 100%; min-height: 52px; }
       .progress-save-status { font-size: 17px; }
       .question-header { min-height: 50px; }
       .question-heading { min-width: 118px; padding: 10px; font-size: 24px; letter-spacing: .02em; }
       .solved-state { padding-inline: 6px; gap: 8px; font-size: 22px; letter-spacing: .02em; }
       .solved-state::before { width: 24px; height: 24px; font-size: 16px; }
-      .answer-form { padding: 20px 16px 14px; }
-      .inline-hints { padding: 20px 12px; }
+      .answer-form { padding: 16px 10px 12px; }
+      .inline-hints { padding: 18px 10px; }
       .inline-hint-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
-      .inline-hint summary { padding: 10px 4px; gap: 2px; font-size: 16px; }
+      .inline-hint summary { min-height: 60px; padding: 10px 8px; gap: 6px; font-size: 17px; }
       .inline-hint summary::after { font-size: 18px; }
       .inline-hint-content { padding: 6px; }
-      .keyboard-help { font-size: 16px; }
-      .question-card, .notice { margin-bottom: 28px; }
-      .page-footer { margin-top: 36px; font-size: 17px; }
+      .keyboard-help { margin-top: 12px; font-size: 17px; text-wrap: wrap; }
+      .question-card, .notice { margin-bottom: 24px; }
+      .page-footer { margin-top: 28px; font-size: 18px; letter-spacing: 0; }
+    }
+
+    @media (max-width: 600px), (max-height: 600px) and (pointer: coarse) {
+      .question-image-zoom { display: flex; align-items: center; justify-content: center; min-height: 44px; margin: 0 auto 8px; padding: 6px 14px; border: 1px solid #b7c3bb; border-radius: 6px; color: #386e66; background: #e7efea; font-size: 17px; line-height: 1.5; cursor: pointer; }
+      #question-image[hidden] ~ .question-image-zoom { display: none; }
+      .answer-form { padding: 16px 10px 12px; }
+      .image-keyboard { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 480px; aspect-ratio: auto; background: none; }
+      .panel-background { display: none; }
+      .mobile-answer-bar { position: sticky; top: 8px; top: max(8px, env(safe-area-inset-top, 0px)); z-index: 4; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 8px; padding-block: 4px; background: var(--paper); }
+      #answer { position: static; width: 100%; height: auto; min-height: 54px; padding: 10px 12px; border-radius: 8px; font-size: 18px; line-height: 1.5; }
+      .mobile-answer-submit { display: block; min-width: 88px; min-height: 54px; padding: 10px 12px; border: 2px solid var(--teal); border-radius: 8px; color: var(--paper); background: var(--teal); font-size: 18px; line-height: 1.5; cursor: pointer; touch-action: manipulation; }
+      .mobile-panel-toggle { display: block; grid-column: 1 / -1; min-height: 44px; padding: 8px 12px; border: 1px solid #b7c3bb; border-radius: 8px; color: #386e66; background: #e7efea; font-size: 17px; line-height: 1.5; cursor: pointer; touch-action: manipulation; }
+      .mobile-answer-submit:focus-visible, .mobile-panel-toggle:focus-visible { outline: 3px solid var(--coral); outline-offset: 2px; }
+      .panel-keys { position: static; display: none; pointer-events: auto; }
+      .is-mobile-panel-open .panel-keys { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+      .panel-keys .panel-key { position: static; inset: auto !important; width: auto !important; height: auto !important; min-height: 44px; border-radius: 8px; font-size: 20px; }
+      .panel-keys .panel-kana, .panel-keys .panel-enter { display: none; }
+      .panel-keys .panel-clear { grid-column: span 3; }
+      .panel-keys .panel-backspace { grid-column: span 2; }
+      .panel-delete > span:not(.mobile-panel-control-label) { display: none; }
+      .panel-delete .mobile-panel-control-label { display: block; font-size: 16px; line-height: 1.5; }
+    }
+
+    @media (max-width: 899px), (hover: none) and (pointer: coarse) {
+      body { padding-right: 0; padding-bottom: 84px; padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+      .question-jump-toggle {
+        position: fixed;
+        z-index: 32;
+        right: 12px;
+        right: max(12px, env(safe-area-inset-right, 0px));
+        bottom: 12px;
+        bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 112px;
+        min-height: 48px;
+        padding: 10px 14px;
+        border: 2px solid var(--ink);
+        border-radius: 10px;
+        color: var(--paper);
+        background: var(--ink);
+        box-shadow: 2px 3px 0 #2f39492b;
+        font-size: 18px;
+        line-height: 1.4;
+        cursor: pointer;
+        touch-action: manipulation;
+      }
+      .question-jump-toggle:focus-visible { outline: 3px solid var(--coral); outline-offset: 3px; }
+      .question-jump {
+        display: none;
+        z-index: 31;
+        top: auto;
+        right: 12px;
+        right: max(12px, env(safe-area-inset-right, 0px));
+        bottom: 76px;
+        bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+        width: min(184px, calc(100vw - 24px));
+        max-height: calc(100vh - 112px);
+        max-height: calc(100dvh - 112px - env(safe-area-inset-bottom, 0px));
+        padding: 10px;
+        gap: 8px;
+        transform: none;
+        box-shadow: 3px 4px 12px #2f394933;
+      }
+      .question-jump.is-open { display: flex; }
+      .question-jump-title { flex-shrink: 0; font-size: 18px; }
+      .question-jump-list { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; align-content: start; }
+      .question-jump-link { min-height: 44px; padding: 6px 2px; font-size: 18px; }
+      .portable-return-all { min-height: 44px; padding: 8px; font-size: 18px; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -717,7 +818,8 @@
     </div>
   </dialog>
 
-  <nav class="question-jump" aria-label="問題への移動と画像の操作">
+  <button id="question-jump-toggle" class="question-jump-toggle" type="button" aria-controls="question-jump" aria-expanded="false" aria-label="問題一覧を開く">問題一覧</button>
+  <nav id="question-jump" class="question-jump" aria-label="問題への移動と画像の操作">
     <p class="question-jump-title">問題</p>
     <ol id="question-jump-list" class="question-jump-list"></ol>
     <button id="portable-return-all" class="portable-return-all" type="button" aria-label="持ち運び中の画像をすべて戻す" aria-controls="portable-images" title="持ち運び中の画像をすべて戻す" hidden>戻す</button>
@@ -729,9 +831,10 @@
         <span class="brand-mark">Web謎</span>
         <span class="brand-logo" role="img" aria-label="portable"></span>
       </div>
-      <button id="author-profile-button" class="author-profile-button" type="button" aria-haspopup="dialog" aria-controls="author-profile-dialog" aria-expanded="false">
+      <button id="author-profile-button" class="author-profile-button" type="button" aria-label="作者プロフィールを開く" aria-haspopup="dialog" aria-controls="author-profile-dialog" aria-expanded="false">
         <img class="author-profile-button-icon" src="Images/author-icon.png" width="30" height="30" alt="" aria-hidden="true">
-        <span>作者プロフィール</span>
+        <span class="author-profile-button-label">作者プロフィール</span>
+        <span class="author-profile-button-short" aria-hidden="true">作者</span>
       </button>
     </div>
   </header>
@@ -753,8 +856,8 @@
             <li>例題を含む<strong>全19問</strong>。最終問題で本編クリア、その先にEX問題があります。</li>
             <li>答えは<strong>すべてひらがな</strong>で入力してください。</li>
             <li>英単語もひらがなに直し、選択問題は<strong>答えの言葉だけ</strong>を入力してください。</li>
-            <li><strong>ヒントは入力パネルの下にあります。</strong>前の問題の見返しは右側の問題番号から行うと簡単です。</li>
-            <li><strong>正解画像はドラッグ（スマホはタップ）で小さくして持ち運べます。</strong>右側の「戻す」でまとめて戻せます。（まさに"portable"！）</li>
+            <li><strong>ヒントは入力パネルの下にあります。</strong>前の問題は、右側の問題番号（スマホでは「問題一覧」）から見返せます。</li>
+            <li><strong>正解画像はドラッグ（スマホはタップ）で小さくして持ち運べます。</strong>「戻す」（スマホでは「問題一覧」の中）でまとめて戻せます。（まさに"portable"！）</li>
             <li><strong>虫眼鏡マーク</strong>がある問題は知識を使います。分からないときは検索をおすすめします。</li>
           </ul>
         </div>
@@ -801,14 +904,19 @@
       <p id="image-error" class="image-error" hidden>
         問題画像を読み込めませんでした。<br>ページを再読み込みしてください。
       </p>
+      <button id="question-image-zoom" class="question-image-zoom" type="button">画像を拡大</button>
 
       <form id="answer-form" class="answer-form" onsubmit="checkAnswer(event)">
         <div id="image-keyboard" class="image-keyboard">
           <img class="panel-background" src="Images/input-panel.png" alt=""
                aria-hidden="true">
-          <input id="answer" type="text" aria-label="答え" placeholder="答えを入力してください"
-                 autocomplete="off" autocapitalize="off" spellcheck="false"
-                 required aria-describedby="result keyboard-help">
+          <div class="mobile-answer-bar">
+            <input id="answer" type="text" aria-label="答え" placeholder="答えを入力"
+                   autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go"
+                   required aria-describedby="result keyboard-help">
+            <button class="mobile-answer-submit" type="submit">解答する</button>
+            <button id="mobile-panel-toggle" class="mobile-panel-toggle" type="button" aria-expanded="false" aria-controls="panel-keys">かなパネルを開く</button>
+          </div>
           <div id="panel-keys" class="panel-keys" role="group" aria-label="文字入力パネル"></div>
         </div>
         <p id="keyboard-help" class="keyboard-help">パネルを押して入力できます。入力欄から直接打ち込むこともできます。</p>
@@ -821,7 +929,10 @@
           <details id="hint-1" class="inline-hint">
             <summary><span id="hint-1-action">ヒント1を見る</span></summary>
             <div class="inline-hint-content">
-              <img id="hint-1-image" class="inline-hint-image" alt="">
+              <button id="hint-1-preview" class="hint-image-preview" type="button" aria-label="ヒント1の画像を拡大">
+                <img id="hint-1-image" class="inline-hint-image" alt="">
+                <span class="hint-image-preview-caption">画像を拡大</span>
+              </button>
               <p id="hint-1-error" class="hint-error" role="status" hidden>
                 ヒント画像を読み込めませんでした。
               </p>
@@ -830,7 +941,10 @@
           <details id="hint-2" class="inline-hint">
             <summary><span id="hint-2-action">ヒント2を見る</span></summary>
             <div class="inline-hint-content">
-              <img id="hint-2-image" class="inline-hint-image" alt="">
+              <button id="hint-2-preview" class="hint-image-preview" type="button" aria-label="ヒント2の画像を拡大">
+                <img id="hint-2-image" class="inline-hint-image" alt="">
+                <span class="hint-image-preview-caption">画像を拡大</span>
+              </button>
               <p id="hint-2-error" class="hint-error" role="status" hidden>
                 ヒント画像を読み込めませんでした。
               </p>
@@ -839,7 +953,10 @@
           <details id="hint-3" class="inline-hint" hidden>
             <summary><span id="hint-3-action">ヒント3を見る</span></summary>
             <div class="inline-hint-content">
-              <img id="hint-3-image" class="inline-hint-image" alt="">
+              <button id="hint-3-preview" class="hint-image-preview" type="button" aria-label="ヒント3の画像を拡大">
+                <img id="hint-3-image" class="inline-hint-image" alt="">
+                <span class="hint-image-preview-caption">画像を拡大</span>
+              </button>
               <p id="hint-3-error" class="hint-error" role="status" hidden>
                 ヒント画像を読み込めませんでした。
               </p>
@@ -848,7 +965,10 @@
           <details id="hint-4" class="inline-hint" hidden>
             <summary><span id="hint-4-action">ヒント4を見る</span></summary>
             <div class="inline-hint-content">
-              <img id="hint-4-image" class="inline-hint-image" alt="">
+              <button id="hint-4-preview" class="hint-image-preview" type="button" aria-label="ヒント4の画像を拡大">
+                <img id="hint-4-image" class="inline-hint-image" alt="">
+                <span class="hint-image-preview-caption">画像を拡大</span>
+              </button>
               <p id="hint-4-error" class="hint-error" role="status" hidden>
                 ヒント画像を読み込めませんでした。
               </p>
@@ -857,7 +977,10 @@
           <details id="hint-5" class="inline-hint" hidden>
             <summary><span id="hint-5-action">ヒント5を見る</span></summary>
             <div class="inline-hint-content">
-              <img id="hint-5-image" class="inline-hint-image" alt="">
+              <button id="hint-5-preview" class="hint-image-preview" type="button" aria-label="ヒント5の画像を拡大">
+                <img id="hint-5-image" class="inline-hint-image" alt="">
+                <span class="hint-image-preview-caption">画像を拡大</span>
+              </button>
               <p id="hint-5-error" class="hint-error" role="status" hidden>
                 ヒント画像を読み込めませんでした。
               </p>
@@ -899,6 +1022,22 @@
     </section>
   </main>
 
+  <dialog id="image-viewer" class="image-viewer" aria-labelledby="image-viewer-title">
+    <div class="image-viewer-header">
+      <h2 id="image-viewer-title">画像を拡大</h2>
+      <button id="image-viewer-close" class="dialog-button" type="button" autofocus>閉じる</button>
+    </div>
+    <div class="image-viewer-tools" role="group" aria-label="画像の倍率">
+      <button id="image-viewer-minus" type="button" aria-label="画像を縮小">−</button>
+      <output id="image-viewer-scale" aria-live="polite">100%</output>
+      <button id="image-viewer-plus" type="button" aria-label="画像を拡大">＋</button>
+      <button id="image-viewer-fit" type="button">全体</button>
+    </div>
+    <div id="image-viewer-body" class="image-viewer-body" tabindex="0" role="region" aria-label="拡大画像。スクロールして見渡せます。">
+      <img id="image-viewer-image" class="image-viewer-image" alt="" draggable="false">
+    </div>
+  </dialog>
+
   <dialog id="restart-dialog" class="restart-dialog" aria-labelledby="restart-title" aria-describedby="restart-description">
     <h2 id="restart-title">進捗を初期化しますか？</h2>
     <p id="restart-description">保存された進捗を消して、例題からはじめます。</p>
@@ -934,7 +1073,7 @@
   </footer>
 
   <div id="portable-images" class="portable-images" role="region" aria-label="持ち運び中の正解画像" hidden></div>
-  <p id="portable-help" class="visually-hidden">ドラッグまたはタップで正解画像を小さくして持ち運べます。キーボードではEnterかスペースで取り出し、矢印キーで移動できます。Escapeか右側の「戻す」で、持ち運び中の画像をまとめて戻せます。</p>
+  <p id="portable-help" class="visually-hidden">ドラッグまたはタップで正解画像を小さくして持ち運べます。キーボードではEnterかスペースで取り出し、矢印キーで移動できます。Escapeか「戻す」（スマホでは「問題一覧」の中）で、持ち運び中の画像をまとめて戻せます。</p>
   <p id="portable-status" class="visually-hidden" role="status"></p>
 
   <script>
@@ -1170,6 +1309,7 @@
     ];
 
     let currentQuestion = 0;
+    let answerIsComposing = false;
 
     const answerInput = document.getElementById("answer");
     const answerForm = document.getElementById("answer-form");
@@ -1184,6 +1324,77 @@
     const restartDialog = document.getElementById("restart-dialog");
     const hintLevels = [1, 2, 3, 4, 5];
     const progressStorageKey = "portable:progress:v1:" + new URL(".", window.location.href).pathname;
+
+    const imageViewer = document.getElementById("image-viewer");
+    const imageViewerImage = document.getElementById("image-viewer-image");
+    const imageViewerBody = document.getElementById("image-viewer-body");
+    const imageViewerScale = document.getElementById("image-viewer-scale");
+    const imageViewerMinus = document.getElementById("image-viewer-minus");
+    const imageViewerPlus = document.getElementById("image-viewer-plus");
+    let imageViewerZoom = 1;
+    let imageViewerRatio = 1;
+    let imageViewerOpener = null;
+
+    function updateImageViewer(zoom = imageViewerZoom, reset = false) {
+      if (!imageViewer.open) return;
+      const width = imageViewerBody.clientWidth;
+      const height = imageViewerBody.clientHeight;
+      if (!width || !height) return;
+      const oldWidth = imageViewerImage.getBoundingClientRect().width;
+      const oldHeight = oldWidth / imageViewerRatio;
+      const x = oldWidth > width ? (imageViewerBody.scrollLeft + width / 2) / oldWidth : .5;
+      const y = oldHeight > height ? (imageViewerBody.scrollTop + height / 2) / oldHeight : .5;
+      imageViewerZoom = Math.max(1, Math.min(3, zoom));
+      const imageWidth = Math.min(width, height * imageViewerRatio) * imageViewerZoom;
+      imageViewerImage.style.width = imageWidth + "px";
+      imageViewerScale.textContent = Math.round(imageViewerZoom * 100) + "%";
+      imageViewerMinus.disabled = imageViewerZoom <= 1;
+      imageViewerPlus.disabled = imageViewerZoom >= 3;
+      imageViewerBody.scrollLeft = reset ? 0 : Math.max(0, imageWidth * x - width / 2);
+      imageViewerBody.scrollTop = reset ? 0 : Math.max(0, imageWidth / imageViewerRatio * y - height / 2);
+    }
+
+    function openImageViewer(source, title, opener = source) {
+      if (!source.complete || !source.naturalWidth || !source.naturalHeight) return;
+      setQuestionNavigationOpen(false);
+      imageViewerOpener = opener;
+      imageViewerRatio = source.naturalWidth / source.naturalHeight;
+      imageViewerZoom = 1;
+      imageViewerImage.width = source.naturalWidth;
+      imageViewerImage.height = source.naturalHeight;
+      imageViewerImage.src = source.currentSrc || source.src;
+      imageViewerImage.alt = source.alt;
+      document.getElementById("image-viewer-title").textContent = title;
+      if (!imageViewer.open) imageViewer.showModal();
+      updateImageViewer(1, true);
+    }
+
+    imageViewerMinus.addEventListener("click", () => updateImageViewer(imageViewerZoom - .5));
+    imageViewerPlus.addEventListener("click", () => updateImageViewer(imageViewerZoom + .5));
+    document.getElementById("image-viewer-fit").addEventListener("click", () => updateImageViewer(1, true));
+    document.getElementById("image-viewer-close").addEventListener("click", () => imageViewer.close());
+    imageViewer.addEventListener("close", function() {
+      imageViewerImage.removeAttribute("src");
+      if (imageViewerOpener && imageViewerOpener.isConnected) imageViewerOpener.focus({ preventScroll: true });
+      imageViewerOpener = null;
+    });
+    imageViewer.addEventListener("click", function(event) {
+      if (event.target !== imageViewer) return;
+      const rect = imageViewer.getBoundingClientRect();
+      if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) imageViewer.close();
+    });
+    window.addEventListener("resize", () => updateImageViewer());
+    const questionImageZoom = document.getElementById("question-image-zoom");
+    questionImageZoom.addEventListener("click", () => openImageViewer(questionImage, getQuestionTitle(currentQuestion), questionImageZoom));
+    questionImage.setAttribute("role", "button");
+    questionImage.setAttribute("aria-label", "問題画像を拡大");
+    questionImage.tabIndex = 0;
+    questionImage.addEventListener("click", () => openImageViewer(questionImage, getQuestionTitle(currentQuestion)));
+    questionImage.addEventListener("keydown", function(event) {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      openImageViewer(questionImage, getQuestionTitle(currentQuestion));
+    });
 
     const portableLayer = document.getElementById("portable-images");
     const portableStatus = document.getElementById("portable-status");
@@ -1230,7 +1441,10 @@
       portableStatus.textContent = "持ち運び中の画像をすべて戻しました。";
     }
 
-    portableReturnButton.addEventListener("click", returnAllPortableImages);
+    portableReturnButton.addEventListener("click", function() {
+      returnAllPortableImages();
+      setQuestionNavigationOpen(false, true);
+    });
 
     function openPortableImage(number, source, left, top) {
       let item = portableImages.get(number);
@@ -1454,13 +1668,64 @@
       scrollToQuestion("game");
     });
 
+    const questionJump = document.getElementById("question-jump");
+    const questionJumpToggle = document.getElementById("question-jump-toggle");
+    const compactQuestionNavigation = window.matchMedia("(max-width: 899px), (hover: none) and (pointer: coarse)");
     const questionJumpList = document.getElementById("question-jump-list");
     let questionJumpLinks = [];
     let jumpUpdateFrame = 0;
 
+    function setQuestionNavigationOpen(open, restoreFocus = false) {
+      const expanded = Boolean(open && compactQuestionNavigation.matches);
+      questionJump.classList.toggle("is-open", expanded);
+      questionJumpToggle.setAttribute("aria-expanded", String(expanded));
+      questionJumpToggle.setAttribute("aria-label", expanded ? "問題一覧を閉じる" : "問題一覧を開く");
+      questionJumpToggle.textContent = expanded ? "閉じる" : "問題一覧";
+      if (!expanded && restoreFocus && compactQuestionNavigation.matches) {
+        questionJumpToggle.focus({ preventScroll: true });
+      }
+    }
+
+    questionJumpToggle.addEventListener("click", function() {
+      const expanded = compactQuestionNavigation.matches && !questionJump.classList.contains("is-open");
+      setQuestionNavigationOpen(expanded, !expanded);
+      if (!expanded) return;
+      const current = questionJump.querySelector('.question-jump-link[aria-current="location"]') || questionJump.querySelector(".question-jump-link");
+      if (current) {
+        const list = questionJumpList.getBoundingClientRect();
+        const item = current.getBoundingClientRect();
+        questionJumpList.scrollTop += item.top - list.top - Math.max(0, (list.height - item.height) / 2);
+        current.focus({ preventScroll: true });
+      }
+    });
+
+    document.addEventListener("pointerdown", function(event) {
+      if (questionJump.classList.contains("is-open") && !questionJump.contains(event.target) && !questionJumpToggle.contains(event.target)) {
+        setQuestionNavigationOpen(false, questionJump.contains(document.activeElement));
+      }
+    });
+
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Escape" && questionJump.classList.contains("is-open")) {
+        event.preventDefault();
+        setQuestionNavigationOpen(false, true);
+      }
+    });
+
+    function resetQuestionNavigationLayout() {
+      setQuestionNavigationOpen(false, questionJump.contains(document.activeElement));
+    }
+
+    if (typeof compactQuestionNavigation.addEventListener === "function") {
+      compactQuestionNavigation.addEventListener("change", resetQuestionNavigationLayout);
+    } else {
+      compactQuestionNavigation.addListener(resetQuestionNavigationLayout);
+    }
+
     function scrollToQuestion(targetId) {
       const target = document.getElementById(targetId);
       if (!target || target.hidden) return;
+      setQuestionNavigationOpen(false, questionJump.contains(document.activeElement));
       const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       target.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth", block: "start" });
     }
@@ -1528,7 +1793,7 @@
 
     function fitCurrentQuestion() {
       questionFitFrame = 0;
-      if (!window.matchMedia("(min-width: 900px)").matches) {
+      if (compactQuestionNavigation.matches) {
         questionImage.style.removeProperty("max-height");
         return;
       }
@@ -1619,12 +1884,16 @@
     }
 
     function buildInputPanel() {
+      const compactInputLayout = window.matchMedia("(max-width: 600px), (max-height: 600px) and (pointer: coarse)");
+      const mobilePanelToggle = document.getElementById("mobile-panel-toggle");
+      const kanaButtons = new Map();
       for (let row = 0; row < 5; row++) {
         for (let column = 0; column < kanaRows[row].length; column++) {
           const text = kanaRows[row][column];
           const label = text === " " ? "空白" : text === "゛" ? "濁点" : text === "゜" ? "半濁点" : text;
           const button = makePanelElement(row, column, label);
           button.textContent = text;
+          kanaButtons.set(text, button);
           button.title = label;
           button.addEventListener("click", function() {
             if (text === "゛") {
@@ -1643,13 +1912,15 @@
       kana.textContent = "かな";
 
       const backspace = makePanelElement(4, 13, "1文字削除");
-      backspace.classList.add("panel-control", "panel-delete");
+      backspace.classList.add("panel-control", "panel-delete", "panel-backspace");
       backspace.innerHTML = '<span><span class="panel-symbol" aria-hidden="true">⌫</span><span class="panel-control-word" aria-hidden="true">BS</span></span>';
+      backspace.insertAdjacentHTML("beforeend", '<span class="mobile-panel-control-label" aria-hidden="true">1文字消す</span>');
       backspace.addEventListener("click", deletePanelCharacter);
 
       const clear = makePanelElement(4, 12, "すべて消去");
-      clear.classList.add("panel-control", "panel-delete");
+      clear.classList.add("panel-control", "panel-delete", "panel-clear");
       clear.innerHTML = '<span><span class="panel-symbol" aria-hidden="true">×</span><span class="panel-control-word" aria-hidden="true">Clear</span></span>';
+      clear.insertAdjacentHTML("beforeend", '<span class="mobile-panel-control-label" aria-hidden="true">すべて消す</span>');
       clear.addEventListener("click", clearPanelAnswer);
 
       const enter = makePanelElement(2, 12, "解答する", 2, 2);
@@ -1662,17 +1933,57 @@
         result.textContent = "";
       });
 
+      answerInput.addEventListener("blur", function() {
+        answerIsComposing = false;
+      });
+      answerInput.addEventListener("compositionstart", () => { answerIsComposing = true; });
+      answerInput.addEventListener("compositionend", () => { answerIsComposing = false; });
+
+      function setKanaPanelOpen(open) {
+        keyboard.classList.toggle("is-mobile-panel-open", open);
+        mobilePanelToggle.setAttribute("aria-expanded", String(open));
+        mobilePanelToggle.textContent = open ? "かなパネルを閉じる" : "かなパネルを開く";
+        if (!open && compactInputLayout.matches && panelKeys.contains(document.activeElement)) mobilePanelToggle.focus({ preventScroll: true });
+      }
+
+      mobilePanelToggle.addEventListener("click", function() {
+        const open = !keyboard.classList.contains("is-mobile-panel-open");
+        if (open && document.activeElement === answerInput) answerInput.blur();
+        setKanaPanelOpen(open);
+      });
+
+      const desktopKeys = Array.from(panelKeys.children);
+      const mobileLetters = Array.from([
+        "あいうえお", "かきくけこ", "さしすせそ", "たちつてと", "なにぬねの", "はひふへほ",
+        "まみむめも", "やゆよ゛゜", "らりるれろ", "わゐゑをん", "ぁぃぅぇぉ", "ゃゅょっー"
+      ].join(""));
+      const mobileKeys = [...mobileLetters.map(letter => kanaButtons.get(letter)), clear, backspace, kana, enter];
+
+      function syncInputLayout() {
+        const focused = document.activeElement;
+        for (const element of compactInputLayout.matches ? mobileKeys : desktopKeys) panelKeys.appendChild(element);
+        if (!compactInputLayout.matches) setKanaPanelOpen(false);
+        if (focused && panelKeys.contains(focused)) {
+          if (compactInputLayout.matches && !keyboard.classList.contains("is-mobile-panel-open")) mobilePanelToggle.focus({ preventScroll: true });
+          else focused.focus({ preventScroll: true });
+        }
+        sizePanel();
+      }
+
       function sizePanel() {
         const scale = keyboard.getBoundingClientRect().width / 868;
-        keyboard.style.setProperty("--panel-key-font", (36 * scale) + "px");
-        keyboard.style.setProperty("--panel-control-font", (20 * scale) + "px");
-        keyboard.style.setProperty("--panel-input-font", (30 * scale) + "px");
-        keyboard.style.setProperty("--panel-radius", (10 * scale) + "px");
+        const compact = compactInputLayout.matches;
+        keyboard.style.setProperty("--panel-key-font", (compact ? 20 : 36 * scale) + "px");
+        keyboard.style.setProperty("--panel-control-font", (compact ? 18 : 20 * scale) + "px");
+        keyboard.style.setProperty("--panel-input-font", (compact ? 18 : Math.max(16, 30 * scale)) + "px");
+        keyboard.style.setProperty("--panel-radius", (compact ? 8 : 10 * scale) + "px");
         scheduleQuestionFit();
       }
       if ("ResizeObserver" in window) new ResizeObserver(sizePanel).observe(keyboard);
       window.addEventListener("resize", sizePanel);
-      sizePanel();
+      if (typeof compactInputLayout.addEventListener === "function") compactInputLayout.addEventListener("change", syncInputLayout);
+      else compactInputLayout.addListener(syncInputLayout);
+      syncInputLayout();
     }
 
     function sha256(value) {
@@ -1742,6 +2053,7 @@
         document.getElementById("hint-" + level + "-action").textContent =
           "ヒント" + level + "を見る";
         const image = document.getElementById("hint-" + level + "-image");
+        document.getElementById("hint-" + level + "-preview").hidden = false;
         image.removeAttribute("src");
         image.alt = "";
         image.hidden = false;
@@ -1753,6 +2065,8 @@
       const details = document.getElementById("hint-" + level);
       const image = document.getElementById("hint-" + level + "-image");
       const error = document.getElementById("hint-" + level + "-error");
+      const preview = document.getElementById("hint-" + level + "-preview");
+      preview.addEventListener("click", () => openImageViewer(image, getQuestionTitle(currentQuestion) + "のヒント" + level, preview));
 
       details.addEventListener("toggle", function() {
         document.getElementById("hint-" + level + "-action").textContent =
@@ -1761,6 +2075,7 @@
         if (details.hidden || !details.open || currentQuestion >= answerChecks.length) return;
 
         image.hidden = false;
+        preview.hidden = false;
         error.hidden = true;
         image.alt = getQuestionTitle(currentQuestion) + "のヒント" + level;
         image.src = "Images/N" + currentQuestion + "H" +
@@ -1769,11 +2084,13 @@
 
       image.addEventListener("error", function() {
         image.hidden = true;
+        preview.hidden = true;
         error.hidden = false;
       });
 
       image.addEventListener("load", function() {
         image.hidden = false;
+        preview.hidden = false;
         error.hidden = true;
       });
     }
@@ -1871,7 +2188,7 @@
     function checkAnswer(event) {
       event.preventDefault();
 
-      if (!initialImagesReady || event.isComposing || currentQuestion >= answerChecks.length) return;
+      if (!initialImagesReady || answerIsComposing || event.isComposing || currentQuestion >= answerChecks.length) return;
 
       const answer = normalizeAnswer(answerInput.value);
       const check = answerChecks[currentQuestion];
