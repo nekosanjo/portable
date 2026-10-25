@@ -710,7 +710,7 @@
     <h2 id="image-loading-title">画像を読み込んでいます</h2>
     <progress id="image-loading-progress" class="image-loading-progress" value="0" max="1" aria-label="画像の読み込み状況"></progress>
     <p id="image-loading-count">0 / 0</p>
-    <p id="image-loading-message" role="status">はじめに、すべての画像を準備しています。</p>
+    <p id="image-loading-message" role="status">はじめに、問題画像などを準備しています。</p>
     <div id="image-loading-actions" class="image-loading-actions" hidden>
       <button id="image-loading-retry" class="dialog-button" type="button">再試行</button>
       <button id="image-loading-continue" class="dialog-button" type="button">そのまま始める</button>
@@ -983,14 +983,12 @@
     function allImagePaths() {
       const paths = new Set();
       const add = path => { if (path) paths.add(new URL(path, document.baseURI).href); };
-      for (const image of document.images) add(image.getAttribute("src") || image.dataset.src);
+      for (const image of document.images) {
+        if (!image.classList.contains("inline-hint-image")) add(image.getAttribute("src") || image.dataset.src);
+      }
       for (let number = 0; number < answerChecks.length; number++) {
         add("Images/N" + number + "." + imageExtension);
         if (number < 18) add("Images/N" + number + "A." + imageExtension);
-        const count = number === 18 ? 5 : 2;
-        for (let level = 1; level <= count; level++) {
-          add("Images/N" + number + "H" + (level === 1 ? "" : level) + "." + imageExtension);
-        }
       }
       const first = questionImagePaths(currentQuestion).map(path => new URL(path, document.baseURI).href);
       return Array.from(new Set([...first.filter(path => paths.has(path)), ...paths]));
@@ -1052,7 +1050,7 @@
       imageLoadingRetry.disabled = true;
       imageLoadingContinue.disabled = true;
       imageLoadingTitle.textContent = "画像を読み込んでいます";
-      imageLoadingMessage.textContent = "はじめに、すべての画像を準備しています。";
+      imageLoadingMessage.textContent = "はじめに、問題画像などを準備しています。";
       if (!paths) {
         paths = allImagePaths();
         imagePreloadState.total = paths.length;
