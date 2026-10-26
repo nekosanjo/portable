@@ -233,6 +233,8 @@
     .tutorial-answer-guide strong { color: #386e66; }
     .tutorial-complete { margin: 18px 0 0; color: #386e66; font-size: 20px; line-height: 1.8; }
     .main-puzzles-title { margin: 0 0 20px; font-size: 28px; line-height: 1.5; }
+    .portable-guide { margin: 0 0 32px; padding: 18px 24px; border-left: 4px solid var(--teal); background: #e7efea; }
+    .portable-guide p { margin: 0; font-size: 20px; line-height: 1.8; }
 
     .notice {
       margin-bottom: 42px;
@@ -716,6 +718,8 @@
       .tutorial-answer-guide { padding: 14px 10px 0; font-size: 16px; }
       .tutorial-complete { margin-top: 14px; padding-inline: 4px; font-size: 16px; }
       .main-puzzles-title { margin-bottom: 14px; }
+      .portable-guide { margin-bottom: 24px; padding: 14px; }
+      .portable-guide p { font-size: 16px; }
       .notice-title { padding: 12px 14px; font-size: 20px; }
       .notice-content { padding: 16px 12px; }
       .notice-block h3 { font-size: 18px; }
@@ -874,7 +878,7 @@
       </header>
 
       <details class="notice" aria-labelledby="notice-title">
-        <summary class="notice-title"><h2 id="notice-title">遊ぶ前に</h2></summary>
+        <summary class="notice-title"><h2 id="notice-title">遊び方・注意事項</h2></summary>
         <div class="notice-content">
           <div class="notice-block">
             <p>VRChatで公開した謎解きのWeb版です。<strong>謎解きの内容は共通ですが、VRChatの知識は不要</strong>です。</p>
@@ -884,7 +888,6 @@
               <li>答えは<strong>すべてひらがな</strong>で入力してください。</li>
               <li>英単語もひらがなに直し、選択問題は<strong>答えの言葉だけ</strong>を入力してください。</li>
               <li><strong>ヒントは入力パネルの下にあります。</strong>前の問題は、右側の問題番号（スマホでは「問題一覧」）から見返せます。</li>
-              <li><strong>正解画像はドラッグ（スマホはタップ）で小さくして持ち運べます。</strong>「戻す」（スマホでは「問題一覧」の中）でまとめて戻せます。（まさに"portable"！）</li>
               <li><strong>虫眼鏡マーク</strong>がある問題は知識を使います。分からないときは検索をおすすめします。</li>
             </ul>
           </div>
@@ -1004,6 +1007,10 @@
 
       <p id="tutorial-complete" class="tutorial-complete" role="status" hidden>チュートリアル完了！この下から本編が始まります。</p>
     </section>
+
+    <aside id="portable-guide" class="portable-guide" aria-label="正解画像の持ち運び方" hidden>
+      <p><strong>正解画像はドラッグ（スマホはタップ）で小さくして持ち運べます。</strong>「戻す」（スマホでは「問題一覧」の中）でまとめて戻せます。（まさに"portable"！）</p>
+    </aside>
 
     <section id="main-puzzles" aria-labelledby="main-puzzles-title" hidden>
       <h2 id="main-puzzles-title" class="main-puzzles-title">本編</h2>
@@ -1355,6 +1362,7 @@
     const tutorial = document.getElementById("tutorial");
     const tutorialSolved = document.getElementById("tutorial-solved");
     const tutorialComplete = document.getElementById("tutorial-complete");
+    const portableGuide = document.getElementById("portable-guide");
     const tutorialAnswerGuide = document.getElementById("tutorial-answer-guide");
     const mainPuzzles = document.getElementById("main-puzzles");
     const normalClear = document.getElementById("normal-clear");
@@ -1670,6 +1678,7 @@
       const isTutorial = currentQuestion === 0;
       tutorialAnswerGuide.hidden = !isTutorial;
       tutorialComplete.hidden = isTutorial;
+      portableGuide.hidden = isTutorial;
       mainPuzzles.hidden = isTutorial;
       if (isTutorial) {
         if (game.parentElement !== tutorial) tutorial.insertBefore(game, tutorialComplete);
@@ -1965,12 +1974,12 @@
       kana.classList.add("panel-kana");
       kana.textContent = "かな";
 
-      const backspace = makePanelElement(4, 13, "1文字削除");
+      const backspace = makePanelElement(4, 12, "1文字削除");
       backspace.classList.add("panel-control", "panel-delete");
       backspace.innerHTML = '<span><span class="panel-symbol" aria-hidden="true">⌫</span><span class="panel-control-word" aria-hidden="true">BS</span></span>';
       backspace.addEventListener("click", deletePanelCharacter);
 
-      const clear = makePanelElement(4, 12, "すべて消去");
+      const clear = makePanelElement(4, 13, "すべて消去");
       clear.classList.add("panel-control", "panel-delete");
       clear.innerHTML = '<span><span class="panel-symbol" aria-hidden="true">×</span><span class="panel-control-word" aria-hidden="true">Clear</span></span>';
       clear.addEventListener("click", clearPanelAnswer);
