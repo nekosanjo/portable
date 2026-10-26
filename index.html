@@ -235,6 +235,8 @@
     .main-puzzles-title { margin: 0 0 20px; font-size: 28px; line-height: 1.5; }
     .portable-guide { margin: 0 0 32px; padding: 18px 24px; border-left: 4px solid var(--teal); background: #e7efea; }
     .portable-guide p { margin: 0; font-size: 20px; line-height: 1.8; }
+    .portable-guide p + p { margin-top: 10px; }
+    .portable-guide .tutorial-complete { margin-top: 18px; }
 
     .notice {
       margin-bottom: 42px;
@@ -720,6 +722,7 @@
       .main-puzzles-title { margin-bottom: 14px; }
       .portable-guide { margin-bottom: 24px; padding: 14px; }
       .portable-guide p { font-size: 16px; }
+      .portable-guide .tutorial-complete { margin-top: 14px; padding-inline: 0; }
       .notice-title { padding: 12px 14px; font-size: 20px; }
       .notice-content { padding: 16px 12px; }
       .notice-block h3 { font-size: 18px; }
@@ -1005,11 +1008,12 @@
         </section>
       </section>
 
-      <p id="tutorial-complete" class="tutorial-complete" role="status" hidden>チュートリアル完了！この下から本編が始まります。</p>
     </section>
 
     <aside id="portable-guide" class="portable-guide" aria-label="正解画像の持ち運び方" hidden>
       <p><strong>正解画像はドラッグ（スマホはタップ）で小さくして持ち運べます。</strong>「戻す」（スマホでは「問題一覧」の中）でまとめて戻せます。（まさに"portable"！）</p>
+      <p>(持ち運ぶことが必須となる問題はありません。)</p>
+      <p id="tutorial-complete" class="tutorial-complete" role="status" hidden>これでチュートリアルは完了！この下から本編が始まります！</p>
     </aside>
 
     <section id="main-puzzles" aria-labelledby="main-puzzles-title" hidden>
@@ -1681,7 +1685,7 @@
       portableGuide.hidden = isTutorial;
       mainPuzzles.hidden = isTutorial;
       if (isTutorial) {
-        if (game.parentElement !== tutorial) tutorial.insertBefore(game, tutorialComplete);
+        if (game.parentElement !== tutorial) tutorial.appendChild(game);
       } else if (game.parentElement !== mainPuzzles) {
         mainPuzzles.insertBefore(game, clearScreen);
       }
