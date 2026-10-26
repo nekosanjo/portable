@@ -216,6 +216,24 @@
       height: auto;
     }
 
+    .tutorial {
+      margin-bottom: 42px;
+      padding: 24px;
+      border: 2px solid var(--teal);
+      border-radius: 10px;
+      background: #edf2ed;
+    }
+
+    .tutorial-header { margin-bottom: 22px; }
+    .tutorial-header h2 { margin: 0; color: #386e66; font-size: 28px; line-height: 1.5; }
+    .tutorial-header p { margin: 10px 0 0; font-size: 20px; line-height: 1.8; }
+    .tutorial .notice { margin-bottom: 24px; }
+    .tutorial .question-card { margin-bottom: 0; }
+    .tutorial-answer-guide { margin: 0; padding: 18px 26px 0; font-size: 20px; line-height: 1.8; }
+    .tutorial-answer-guide strong { color: #386e66; }
+    .tutorial-complete { margin: 18px 0 0; color: #386e66; font-size: 20px; line-height: 1.8; }
+    .main-puzzles-title { margin: 0 0 20px; font-size: 28px; line-height: 1.5; }
+
     .notice {
       margin-bottom: 42px;
       border: 2px solid var(--ink);
@@ -690,6 +708,14 @@
       .image-loading-dialog p { font-size: 16px; line-height: 1.7; }
       .intro { padding: 14px 0 18px; }
       .intro p { margin-top: 12px; font-size: 15px; }
+      .tutorial { margin-bottom: 24px; padding: 12px 8px; border-radius: 8px; }
+      .tutorial-header { margin-bottom: 16px; padding-inline: 4px; }
+      .tutorial-header h2, .main-puzzles-title { font-size: 20px; }
+      .tutorial-header p { margin-top: 8px; font-size: 16px; }
+      .tutorial .notice { margin-bottom: 16px; }
+      .tutorial-answer-guide { padding: 14px 10px 0; font-size: 16px; }
+      .tutorial-complete { margin-top: 14px; padding-inline: 4px; font-size: 16px; }
+      .main-puzzles-title { margin-bottom: 14px; }
       .notice-title { padding: 12px 14px; font-size: 20px; }
       .notice-content { padding: 16px 12px; }
       .notice-block h3 { font-size: 18px; }
@@ -841,170 +867,187 @@
            alt="謎解きワールド portable｜作：ねこさんじょう">
     </div>
 
-    <details class="notice" aria-labelledby="notice-title">
-      <summary class="notice-title"><h2 id="notice-title">遊ぶ前に</h2></summary>
-      <div class="notice-content">
-        <div class="notice-block">
-          <p>VRChatで公開した謎解きのWeb版です。<strong>謎解きの内容は共通ですが、VRChatの知識は不要</strong>です。</p>
-          <ul>
-            <li><strong>無料・登録不要</strong>／目安1〜2時間（時間制限なし）</li>
-            <li>例題を含む<strong>全19問</strong>。最終問題正解で本編クリア、その先にEX問題もあります。</li>
-            <li>答えは<strong>すべてひらがな</strong>で入力してください。</li>
-            <li>英単語もひらがなに直し、選択問題は<strong>答えの言葉だけ</strong>を入力してください。</li>
-            <li><strong>ヒントは入力パネルの下にあります。</strong>前の問題は、右側の問題番号（スマホでは「問題一覧」）から見返せます。</li>
-            <li><strong>正解画像はドラッグ（スマホはタップ）で小さくして持ち運べます。</strong>「戻す」（スマホでは「問題一覧」の中）でまとめて戻せます。（まさに"portable"！）</li>
-            <li><strong>虫眼鏡マーク</strong>がある問題は知識を使います。分からないときは検索をおすすめします。</li>
-          </ul>
-        </div>
-        <details class="notice-details">
-          <summary>保存・配信などの詳しい案内</summary>
-          <div class="notice-details-content">
-            <section class="notice-block" aria-labelledby="notice-save">
-              <h3 id="notice-save">進捗の保存</h3>
-              <p>進捗は<strong>この端末・ブラウザーに自動保存</strong>されます。別の端末等への引き継ぎはできず、サイトデータを削除すると進捗も消えます。遊び直す場合はページ下部の「はじめから解く」から。</p>
-            </section>
-            <section class="notice-block" aria-labelledby="notice-sharing">
-              <h3 id="notice-sharing">配信・感想の投稿</h3>
-              <ul>
-                <li><strong>動画投稿・実況配信OK</strong>。</li>
-                <li>SNSでは、問題・解答・ヒントの画像や、答え・解法が分かる投稿はお控えください。</li>
-                <li>感想やクリア報告は<a href="https://x.com/hashtag/nazo_ptbl" target="_blank" rel="noopener noreferrer">#nazo_ptbl</a>でどうぞ。</li>
-              </ul>
-            </section>
-          </div>
-        </details>
-      </div>
-    </details>
-
-    <div id="solved-questions"></div>
-
-    <section id="normal-clear" class="clear-screen" aria-label="本編クリア" hidden>
-      <h2 class="visually-hidden">本編クリア！</h2>
-      <img class="clear-image" src="Images/Clear.png" alt="portable Clear!!">
-      <p class="clear-caption">本編クリア！おめでとうございます！ 続けてEX問題に挑戦できます！</p>
-      <div class="clear-actions">
-        <a id="normal-clear-tweet" class="clear-tweet" href="https://x.com/intent/tweet"
-           target="_blank" rel="noopener noreferrer" aria-label="本編クリアをポスト(ツイート)（𝕏(Twitter)の投稿画面を別タブで開く）">
-          <span class="clear-tweet-label">𝕏(Twitter)で本編クリアをポスト(ツイート)</span>
-        </a>
-      </div>
-    </section>
-
-    <section id="game" class="question-card" aria-labelledby="question-title">
-      <header class="question-header">
-        <h2 id="question-title" class="question-heading"></h2>
+    <section id="tutorial" class="tutorial" aria-labelledby="tutorial-title">
+      <header class="tutorial-header">
+        <h2 id="tutorial-title">チュートリアル</h2>
+        <p>遊び方を確認して、例題で答えの入力を試してみましょう。</p>
       </header>
 
-      <img id="question-image" class="question-image" alt="">
-      <p id="image-error" class="image-error" hidden>
-        問題画像を読み込めませんでした。<br>ページを再読み込みしてください。
-      </p>
-      <button id="question-image-zoom" class="question-image-zoom" type="button">画像を拡大</button>
-
-      <form id="answer-form" class="answer-form" onsubmit="checkAnswer(event)">
-        <div id="image-keyboard" class="image-keyboard">
-          <img class="panel-background" src="Images/input-panel.png" alt=""
-               aria-hidden="true">
-          <input id="answer" type="text" aria-label="答え" placeholder="答えを入力"
-                 autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go"
-                 required aria-describedby="result keyboard-help">
-          <div id="panel-keys" class="panel-keys" role="group" aria-label="文字入力パネル"></div>
-        </div>
-        <p id="keyboard-help" class="keyboard-help">パネルを押して入力できます。入力欄から直接打ち込むこともできます。</p>
-        <p id="result" class="answer-result" role="status"></p>
-      </form>
-
-      <section class="inline-hints" aria-labelledby="current-hints-title">
-        <h3 id="current-hints-title">この問題のヒント</h3>
-        <div class="inline-hint-grid">
-          <details id="hint-1" class="inline-hint">
-            <summary><span id="hint-1-action">ヒント1を見る</span></summary>
-            <div class="inline-hint-content">
-              <button id="hint-1-preview" class="hint-image-preview" type="button" aria-label="ヒント1の画像を拡大">
-                <img id="hint-1-image" class="inline-hint-image" alt="">
-                <span class="hint-image-preview-caption">画像を拡大</span>
-              </button>
-              <p id="hint-1-error" class="hint-error" role="status" hidden>
-                ヒント画像を読み込めませんでした。
-              </p>
-            </div>
-          </details>
-          <details id="hint-2" class="inline-hint">
-            <summary><span id="hint-2-action">ヒント2を見る</span></summary>
-            <div class="inline-hint-content">
-              <button id="hint-2-preview" class="hint-image-preview" type="button" aria-label="ヒント2の画像を拡大">
-                <img id="hint-2-image" class="inline-hint-image" alt="">
-                <span class="hint-image-preview-caption">画像を拡大</span>
-              </button>
-              <p id="hint-2-error" class="hint-error" role="status" hidden>
-                ヒント画像を読み込めませんでした。
-              </p>
-            </div>
-          </details>
-          <details id="hint-3" class="inline-hint" hidden>
-            <summary><span id="hint-3-action">ヒント3を見る</span></summary>
-            <div class="inline-hint-content">
-              <button id="hint-3-preview" class="hint-image-preview" type="button" aria-label="ヒント3の画像を拡大">
-                <img id="hint-3-image" class="inline-hint-image" alt="">
-                <span class="hint-image-preview-caption">画像を拡大</span>
-              </button>
-              <p id="hint-3-error" class="hint-error" role="status" hidden>
-                ヒント画像を読み込めませんでした。
-              </p>
-            </div>
-          </details>
-          <details id="hint-4" class="inline-hint" hidden>
-            <summary><span id="hint-4-action">ヒント4を見る</span></summary>
-            <div class="inline-hint-content">
-              <button id="hint-4-preview" class="hint-image-preview" type="button" aria-label="ヒント4の画像を拡大">
-                <img id="hint-4-image" class="inline-hint-image" alt="">
-                <span class="hint-image-preview-caption">画像を拡大</span>
-              </button>
-              <p id="hint-4-error" class="hint-error" role="status" hidden>
-                ヒント画像を読み込めませんでした。
-              </p>
-            </div>
-          </details>
-          <details id="hint-5" class="inline-hint" hidden>
-            <summary><span id="hint-5-action">ヒント5を見る</span></summary>
-            <div class="inline-hint-content">
-              <button id="hint-5-preview" class="hint-image-preview" type="button" aria-label="ヒント5の画像を拡大">
-                <img id="hint-5-image" class="inline-hint-image" alt="">
-                <span class="hint-image-preview-caption">画像を拡大</span>
-              </button>
-              <p id="hint-5-error" class="hint-error" role="status" hidden>
-                ヒント画像を読み込めませんでした。
-              </p>
+      <details class="notice" aria-labelledby="notice-title">
+        <summary class="notice-title"><h2 id="notice-title">遊ぶ前に</h2></summary>
+        <div class="notice-content">
+          <div class="notice-block">
+            <p>VRChatで公開した謎解きのWeb版です。<strong>謎解きの内容は共通ですが、VRChatの知識は不要</strong>です。</p>
+            <ul>
+              <li><strong>無料・登録不要</strong>／目安1〜2時間（時間制限なし）</li>
+              <li>例題を含む<strong>全19問</strong>。最終問題正解で本編クリア、その先にEX問題もあります。</li>
+              <li>答えは<strong>すべてひらがな</strong>で入力してください。</li>
+              <li>英単語もひらがなに直し、選択問題は<strong>答えの言葉だけ</strong>を入力してください。</li>
+              <li><strong>ヒントは入力パネルの下にあります。</strong>前の問題は、右側の問題番号（スマホでは「問題一覧」）から見返せます。</li>
+              <li><strong>正解画像はドラッグ（スマホはタップ）で小さくして持ち運べます。</strong>「戻す」（スマホでは「問題一覧」の中）でまとめて戻せます。（まさに"portable"！）</li>
+              <li><strong>虫眼鏡マーク</strong>がある問題は知識を使います。分からないときは検索をおすすめします。</li>
+            </ul>
+          </div>
+          <details class="notice-details">
+            <summary>保存・配信などの詳しい案内</summary>
+            <div class="notice-details-content">
+              <section class="notice-block" aria-labelledby="notice-save">
+                <h3 id="notice-save">進捗の保存</h3>
+                <p>進捗は<strong>この端末・ブラウザーに自動保存</strong>されます。別の端末等への引き継ぎはできず、サイトデータを削除すると進捗も消えます。遊び直す場合はページ下部の「はじめから解く」から。</p>
+              </section>
+              <section class="notice-block" aria-labelledby="notice-sharing">
+                <h3 id="notice-sharing">配信・感想の投稿</h3>
+                <ul>
+                  <li><strong>動画投稿・実況配信OK</strong>。</li>
+                  <li>SNSでは、問題・解答・ヒントの画像や、答え・解法が分かる投稿はお控えください。</li>
+                  <li>感想やクリア報告は<a href="https://x.com/hashtag/nazo_ptbl" target="_blank" rel="noopener noreferrer">#nazo_ptbl</a>でどうぞ。</li>
+                </ul>
+              </section>
             </div>
           </details>
         </div>
+      </details>
+
+      <div id="tutorial-solved"></div>
+      <section id="game" class="question-card" aria-labelledby="question-title">
+        <header class="question-header">
+          <h2 id="question-title" class="question-heading"></h2>
+        </header>
+
+        <img id="question-image" class="question-image" alt="">
+        <p id="image-error" class="image-error" hidden>
+          問題画像を読み込めませんでした。<br>ページを再読み込みしてください。
+        </p>
+        <button id="question-image-zoom" class="question-image-zoom" type="button">画像を拡大</button>
+
+        <p id="tutorial-answer-guide" class="tutorial-answer-guide" hidden>例題の答えは「すいせい」です。下のパネルで<strong>すいせい</strong>と入力し、<strong>Enter</strong>を押してみましょう。</p>
+
+        <form id="answer-form" class="answer-form" onsubmit="checkAnswer(event)">
+          <div id="image-keyboard" class="image-keyboard">
+            <img class="panel-background" src="Images/input-panel.png" alt=""
+                 aria-hidden="true">
+            <input id="answer" type="text" aria-label="答え" placeholder="答えを入力"
+                   autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go"
+                   required aria-describedby="result keyboard-help">
+            <div id="panel-keys" class="panel-keys" role="group" aria-label="文字入力パネル"></div>
+          </div>
+          <p id="keyboard-help" class="keyboard-help">パネルを押して入力できます。入力欄から直接打ち込むこともできます。</p>
+          <p id="result" class="answer-result" role="status"></p>
+        </form>
+
+        <section class="inline-hints" aria-labelledby="current-hints-title">
+          <h3 id="current-hints-title">この問題のヒント</h3>
+          <div class="inline-hint-grid">
+            <details id="hint-1" class="inline-hint">
+              <summary><span id="hint-1-action">ヒント1を見る</span></summary>
+              <div class="inline-hint-content">
+                <button id="hint-1-preview" class="hint-image-preview" type="button" aria-label="ヒント1の画像を拡大">
+                  <img id="hint-1-image" class="inline-hint-image" alt="">
+                  <span class="hint-image-preview-caption">画像を拡大</span>
+                </button>
+                <p id="hint-1-error" class="hint-error" role="status" hidden>
+                  ヒント画像を読み込めませんでした。
+                </p>
+              </div>
+            </details>
+            <details id="hint-2" class="inline-hint">
+              <summary><span id="hint-2-action">ヒント2を見る</span></summary>
+              <div class="inline-hint-content">
+                <button id="hint-2-preview" class="hint-image-preview" type="button" aria-label="ヒント2の画像を拡大">
+                  <img id="hint-2-image" class="inline-hint-image" alt="">
+                  <span class="hint-image-preview-caption">画像を拡大</span>
+                </button>
+                <p id="hint-2-error" class="hint-error" role="status" hidden>
+                  ヒント画像を読み込めませんでした。
+                </p>
+              </div>
+            </details>
+            <details id="hint-3" class="inline-hint" hidden>
+              <summary><span id="hint-3-action">ヒント3を見る</span></summary>
+              <div class="inline-hint-content">
+                <button id="hint-3-preview" class="hint-image-preview" type="button" aria-label="ヒント3の画像を拡大">
+                  <img id="hint-3-image" class="inline-hint-image" alt="">
+                  <span class="hint-image-preview-caption">画像を拡大</span>
+                </button>
+                <p id="hint-3-error" class="hint-error" role="status" hidden>
+                  ヒント画像を読み込めませんでした。
+                </p>
+              </div>
+            </details>
+            <details id="hint-4" class="inline-hint" hidden>
+              <summary><span id="hint-4-action">ヒント4を見る</span></summary>
+              <div class="inline-hint-content">
+                <button id="hint-4-preview" class="hint-image-preview" type="button" aria-label="ヒント4の画像を拡大">
+                  <img id="hint-4-image" class="inline-hint-image" alt="">
+                  <span class="hint-image-preview-caption">画像を拡大</span>
+                </button>
+                <p id="hint-4-error" class="hint-error" role="status" hidden>
+                  ヒント画像を読み込めませんでした。
+                </p>
+              </div>
+            </details>
+            <details id="hint-5" class="inline-hint" hidden>
+              <summary><span id="hint-5-action">ヒント5を見る</span></summary>
+              <div class="inline-hint-content">
+                <button id="hint-5-preview" class="hint-image-preview" type="button" aria-label="ヒント5の画像を拡大">
+                  <img id="hint-5-image" class="inline-hint-image" alt="">
+                  <span class="hint-image-preview-caption">画像を拡大</span>
+                </button>
+                <p id="hint-5-error" class="hint-error" role="status" hidden>
+                  ヒント画像を読み込めませんでした。
+                </p>
+              </div>
+            </details>
+          </div>
+        </section>
       </section>
+
+      <p id="tutorial-complete" class="tutorial-complete" role="status" hidden>チュートリアル完了！この下から本編が始まります。</p>
     </section>
 
-    <section id="clear-screen" class="clear-screen" aria-label="EXクリア" hidden>
-      <h2 class="visually-hidden">EX問題クリア！</h2>
-      <img class="clear-image" src="Images/EXClear.png" alt="portable EX Clear!!!">
-      <p class="clear-caption">EX問題クリア！とてもすごい！<br>最後まで遊んでいただき、本当にありがとうございました！</p>
-      <div class="clear-actions">
-        <a id="ex-clear-tweet" class="clear-tweet" href="https://x.com/intent/tweet"
-           target="_blank" rel="noopener noreferrer" aria-label="EXクリアをポスト(ツイート)（𝕏(Twitter)の投稿画面を別タブで開く）">
-          <span class="clear-tweet-label">𝕏(Twitter)でEXクリアをポスト(ツイート)</span>
-        </a>
-      </div>
-      <section class="clear-extras" aria-label="あとがきと制作協力">
-        <details class="clear-extra">
-          <summary>あとがき</summary>
-          <a class="clear-extra-image-link" href="Images/Atogaki.png" target="_blank" rel="noopener noreferrer" aria-label="あとがきを大きく表示（別タブで開く）">
-            <img class="clear-extra-image" data-src="Images/Atogaki.png" width="810" height="1080" alt="portableのあとがき">
+    <section id="main-puzzles" aria-labelledby="main-puzzles-title" hidden>
+      <h2 id="main-puzzles-title" class="main-puzzles-title">本編</h2>
+
+      <div id="solved-questions"></div>
+
+      <section id="normal-clear" class="clear-screen" aria-label="本編クリア" hidden>
+        <h2 class="visually-hidden">本編クリア！</h2>
+        <img class="clear-image" src="Images/Clear.png" alt="portable Clear!!">
+        <p class="clear-caption">本編クリア！おめでとうございます！ 続けてEX問題に挑戦できます！</p>
+        <div class="clear-actions">
+          <a id="normal-clear-tweet" class="clear-tweet" href="https://x.com/intent/tweet"
+             target="_blank" rel="noopener noreferrer" aria-label="本編クリアをポスト(ツイート)（𝕏(Twitter)の投稿画面を別タブで開く）">
+            <span class="clear-tweet-label">𝕏(Twitter)で本編クリアをポスト(ツイート)</span>
           </a>
-        </details>
-        <details class="clear-extra">
-          <summary>テストプレイ</summary>
-          <a class="clear-extra-image-link" href="Images/Testplay.png" target="_blank" rel="noopener noreferrer" aria-label="テストプレイ協力者の画像を大きく表示（別タブで開く）">
-            <img class="clear-extra-image" data-src="Images/Testplay.png" width="810" height="1080" alt="テストプレイ協力者一覧（敬称略）">
-          </a>
-        </details>
+        </div>
       </section>
+
+      <section id="clear-screen" class="clear-screen" aria-label="EXクリア" hidden>
+        <h2 class="visually-hidden">EX問題クリア！</h2>
+        <img class="clear-image" src="Images/EXClear.png" alt="portable EX Clear!!!">
+        <p class="clear-caption">EX問題クリア！とてもすごい！<br>最後まで遊んでいただき、本当にありがとうございました！</p>
+        <div class="clear-actions">
+          <a id="ex-clear-tweet" class="clear-tweet" href="https://x.com/intent/tweet"
+             target="_blank" rel="noopener noreferrer" aria-label="EXクリアをポスト(ツイート)（𝕏(Twitter)の投稿画面を別タブで開く）">
+            <span class="clear-tweet-label">𝕏(Twitter)でEXクリアをポスト(ツイート)</span>
+          </a>
+        </div>
+        <section class="clear-extras" aria-label="あとがきと制作協力">
+          <details class="clear-extra">
+            <summary>あとがき</summary>
+            <a class="clear-extra-image-link" href="Images/Atogaki.png" target="_blank" rel="noopener noreferrer" aria-label="あとがきを大きく表示（別タブで開く）">
+              <img class="clear-extra-image" data-src="Images/Atogaki.png" width="810" height="1080" alt="portableのあとがき">
+            </a>
+          </details>
+          <details class="clear-extra">
+            <summary>テストプレイ</summary>
+            <a class="clear-extra-image-link" href="Images/Testplay.png" target="_blank" rel="noopener noreferrer" aria-label="テストプレイ協力者の画像を大きく表示（別タブで開く）">
+              <img class="clear-extra-image" data-src="Images/Testplay.png" width="810" height="1080" alt="テストプレイ協力者一覧（敬称略）">
+            </a>
+          </details>
+        </section>
+      </section>
+
     </section>
 
     <section class="progress-controls" aria-label="進捗の保存と初期化">
@@ -1309,6 +1352,11 @@
     const result = document.getElementById("result");
     const solvedQuestions = document.getElementById("solved-questions");
     const game = document.getElementById("game");
+    const tutorial = document.getElementById("tutorial");
+    const tutorialSolved = document.getElementById("tutorial-solved");
+    const tutorialComplete = document.getElementById("tutorial-complete");
+    const tutorialAnswerGuide = document.getElementById("tutorial-answer-guide");
+    const mainPuzzles = document.getElementById("main-puzzles");
     const normalClear = document.getElementById("normal-clear");
     const clearScreen = document.getElementById("clear-screen");
     const progressSaveStatus = document.getElementById("progress-save-status");
@@ -1618,11 +1666,25 @@
       }
     }
 
+    function updateTutorial() {
+      const isTutorial = currentQuestion === 0;
+      tutorialAnswerGuide.hidden = !isTutorial;
+      tutorialComplete.hidden = isTutorial;
+      mainPuzzles.hidden = isTutorial;
+      if (isTutorial) {
+        if (game.parentElement !== tutorial) tutorial.insertBefore(game, tutorialComplete);
+      } else if (game.parentElement !== mainPuzzles) {
+        mainPuzzles.insertBefore(game, clearScreen);
+      }
+    }
+
     function renderProgress() {
       clearPortableImages();
       resetClearExtras();
+      updateTutorial();
       normalClear.hidden = true;
       solvedQuestions.after(normalClear);
+      tutorialSolved.replaceChildren();
       solvedQuestions.replaceChildren();
       for (let number = 0; number < Math.min(currentQuestion, 18); number++) {
         appendSolvedQuestion(number);
@@ -2077,6 +2139,7 @@
     function showQuestion() {
       const name = "N" + currentQuestion;
 
+      updateTutorial();
       resetInlineHints();
 
       game.dataset.kind = getQuestionKind(currentQuestion);
@@ -2131,7 +2194,7 @@
 
       header.append(heading, state);
       solvedSection.append(header, solvedImage);
-      solvedQuestions.appendChild(solvedSection);
+      (number === 0 ? tutorialSolved : solvedQuestions).appendChild(solvedSection);
 
       if (number === 17) {
         normalClear.hidden = false;
