@@ -65,6 +65,7 @@
     button, input { font: inherit; }
 
     .question-jump-toggle { display: none; }
+    .mobile-instructions { display: none; }
 
     .question-jump {
       position: fixed;
@@ -760,6 +761,8 @@
     }
 
     @media (max-width: 899px), (hover: none) and (pointer: coarse) {
+      .desktop-instructions { display: none; }
+      .mobile-instructions { display: inline; }
       body { padding-right: 0; padding-bottom: 16px; padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
       .site-header { position: sticky; top: 0; z-index: 32; padding-top: env(safe-area-inset-top, 0px); background: var(--paper); }
       .header-inner { min-height: 60px; flex-wrap: nowrap; gap: 6px; padding-block: 8px; }
@@ -868,12 +871,15 @@
           <div class="notice-block">
             <p>VRChatで公開した謎解きのWeb版です。<strong>謎解きの内容は共通ですが、VRChatの知識は不要</strong>です。</p>
             <ul>
-              <li><strong>無料・登録不要</strong>／目安1〜2時間（時間制限なし）</li>
+              <li><strong>無料・登録不要</strong>。目安は1〜2時間で、時間制限はありません。</li>
               <li>例題を含む<strong>全19問</strong>。最終問題正解で本編クリア、その先にEX問題もあります。</li>
               <li>答えは<strong>すべてひらがな</strong>で入力してください。</li>
               <li>英単語もひらがなに直してください。選択問題は<strong>答えの言葉だけ</strong>を入力してください。</li>
               <li><strong>ヒントは入力パネルの下にあります</strong>ので、行き詰った時に活用してください。</li>
-              <li>解いた問題は右側の問題番号（スマホでは「問題一覧」）から見返せます。</li>
+              <li>
+                <span class="desktop-instructions">解いた問題は、右側の問題番号から見返せます。</span>
+                <span class="mobile-instructions">解いた問題は、画面上部の「問題一覧」から見返せます。</span>
+              </li>
               <li><strong>虫眼鏡マーク</strong>がある問題は知識を使います。分からないときは検索をおすすめします。</li>
             </ul>
           </div>
@@ -993,8 +999,12 @@
     </section>
 
     <aside id="portable-guide" class="portable-guide" aria-label="正解画像の持ち運び方" hidden>
-      <p><strong>正解画像はドラッグ（スマホはタップ）で小さくして持ち運べます。</strong>「戻す」（スマホでは「問題一覧」の中）でまとめて戻せます。（まさに"portable"！）</p>
-      <p>(持ち運ぶことが必須となる問題はありません。)</p>
+      <p>
+        <span class="desktop-instructions"><strong>正解画像はドラッグで小さくして持ち運べます。</strong>右側の「戻す」でまとめて戻せます。</span>
+        <span class="mobile-instructions"><strong>正解画像はタップで小さくして持ち運べます。</strong>画面上部の「問題一覧」にある「戻す」でまとめて戻せます。</span>
+        まさに"portable"！
+      </p>
+      <p>持ち運ぶことが必須となる問題はありません。</p>
       <p id="tutorial-complete" class="tutorial-complete" role="status" hidden>これでチュートリアルは完了！この下から本編が始まります！</p>
     </aside>
 
@@ -1080,7 +1090,7 @@
       <span>VRChatで謎解きを作っています。</span>
       <span>代表作は【謎解きワールド】portableです。</span>
       <span>どうぞ楽しんで解いてください！</span>
-      <span>(この画面は謎解きの内容と無関係です。)</span>
+      <span>この画面は謎解きの内容と無関係です。</span>
     </p>
   </dialog>
 
@@ -1090,7 +1100,10 @@
   </footer>
 
   <div id="portable-images" class="portable-images" role="region" aria-label="持ち運び中の正解画像" hidden></div>
-  <p id="portable-help" class="visually-hidden">ドラッグまたはタップで正解画像を小さくして持ち運べます。キーボードではEnterかスペースで取り出し、矢印キーで移動できます。Escapeか「戻す」（スマホでは「問題一覧」の中）で、持ち運び中の画像をまとめて戻せます。</p>
+  <p id="portable-help" class="visually-hidden">
+    <span class="desktop-instructions">ドラッグで正解画像を小さくして持ち運べます。キーボードではEnterかスペースで取り出し、矢印キーで移動できます。Escapeか右側の「戻す」で、持ち運び中の画像をまとめて戻せます。</span>
+    <span class="mobile-instructions">タップで正解画像を小さくして持ち運べます。画面上部の「問題一覧」にある「戻す」で、持ち運び中の画像をまとめて戻せます。</span>
+  </p>
   <p id="portable-status" class="visually-hidden" role="status"></p>
 
   <script>
