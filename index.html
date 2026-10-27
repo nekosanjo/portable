@@ -822,7 +822,6 @@
   <dialog id="image-loading-dialog" class="image-loading-dialog" aria-labelledby="image-loading-title" aria-describedby="image-loading-message">
     <h2 id="image-loading-title">画像を読み込んでいます</h2>
     <progress id="image-loading-progress" class="image-loading-progress" value="0" max="1" aria-label="画像の読み込み状況"></progress>
-    <p id="image-loading-count">0 / 0</p>
     <p id="image-loading-message" role="status">はじめに、問題画像などを準備しています。</p>
     <div id="image-loading-actions" class="image-loading-actions" hidden>
       <button id="image-loading-retry" class="dialog-button" type="button">再試行</button>
@@ -1101,7 +1100,6 @@
     const imageLoadingDialog = document.getElementById("image-loading-dialog");
     const imageLoadingTitle = document.getElementById("image-loading-title");
     const imageLoadingProgress = document.getElementById("image-loading-progress");
-    const imageLoadingCount = document.getElementById("image-loading-count");
     const imageLoadingMessage = document.getElementById("image-loading-message");
     const imageLoadingActions = document.getElementById("image-loading-actions");
     const imageLoadingRetry = document.getElementById("image-loading-retry");
@@ -1186,7 +1184,6 @@
     function updateImageLoadingProgress() {
       imageLoadingProgress.max = imagePreloadState.total;
       imageLoadingProgress.value = imagePreloadState.loaded.size;
-      imageLoadingCount.textContent = imagePreloadState.loaded.size + " / " + imagePreloadState.total;
     }
 
     async function finishInitialImageLoading() {
@@ -1230,8 +1227,7 @@
         await finishInitialImageLoading();
       } else {
         imageLoadingTitle.textContent = "一部の画像を読み込めませんでした";
-        imageLoadingMessage.textContent = imagePreloadState.failed.size +
-          "枚の画像を読み込めませんでした。通信状態を確認して再試行するか、そのまま始められます。";
+        imageLoadingMessage.textContent = "通信状態を確認して再試行するか、そのまま始められます。";
         imageLoadingActions.hidden = false;
         imageLoadingRetry.disabled = false;
         imageLoadingContinue.disabled = false;
