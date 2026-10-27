@@ -364,8 +364,6 @@
     }
 
     #question-image { object-fit: contain; }
-    #question-image { cursor: zoom-in; }
-    .question-image-zoom { display: none; }
 
     .portable-source { cursor: grab; user-select: none; -webkit-user-drag: none; touch-action: pan-y pinch-zoom; }
     .portable-source:focus-visible { outline: 3px solid var(--teal); outline-offset: -4px; }
@@ -679,20 +677,12 @@
 
     .page-footer .footer-logo { margin-left: auto; }
 
-    .image-viewer { position: fixed; inset: 0; width: min(900px, calc(100% - 24px)); height: calc(100vh - 24px); height: calc(100dvh - 24px); max-height: 900px; margin: auto; padding: 0; overflow: hidden; border: 2px solid var(--ink); border-radius: 10px; color: var(--ink); background: var(--paper); }
-    .image-viewer[open] { display: flex; flex-direction: column; }
+    body.is-hint-viewer-open { overflow: hidden; }
+    .image-viewer { position: fixed; inset: 0; width: 100%; height: 100vh; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: calc(64px + env(safe-area-inset-top, 0px)) max(12px, env(safe-area-inset-right, 0px)) max(12px, env(safe-area-inset-bottom, 0px)) max(12px, env(safe-area-inset-left, 0px)); overflow: hidden; overscroll-behavior: contain; border: 0; border-radius: 0; color: var(--ink); background: var(--paper); }
+    .image-viewer[open] { display: block; }
     .image-viewer::backdrop { background: #2f3949a6; }
-    .image-viewer-header { display: flex; flex-shrink: 0; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid #c8c9c0; }
-    .image-viewer-header h2 { min-width: 0; margin: 0; font-size: 22px; line-height: 1.5; }
-    .image-viewer-header .dialog-button { flex-shrink: 0; min-height: 44px; padding: 8px 12px; }
-    .image-viewer-tools { display: flex; flex-shrink: 0; align-items: center; justify-content: center; gap: 8px; padding: 10px; }
-    .image-viewer-tools button { min-width: 44px; min-height: 44px; padding: 6px 10px; border: 1px solid var(--ink); border-radius: 6px; color: var(--ink); background: #e7efea; font-size: 20px; line-height: 1.4; cursor: pointer; touch-action: manipulation; }
-    .image-viewer-tools button:disabled { opacity: .4; cursor: default; }
-    .image-viewer-tools button:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
-    .image-viewer-tools output { min-width: 56px; font-size: 18px; text-align: center; }
-    .image-viewer-tools #image-viewer-fit { min-width: 60px; font-size: 16px; }
-    .image-viewer-body { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; background: #e7efea; touch-action: pan-x pan-y pinch-zoom; }
-    .image-viewer-image { display: block; width: 100%; max-width: none; height: auto; margin: 0 auto; -webkit-user-drag: none; }
+    .image-viewer-close { position: absolute; top: calc(10px + env(safe-area-inset-top, 0px)); right: max(12px, env(safe-area-inset-right, 0px)); min-height: 44px; padding: 8px 16px; font-size: 16px; touch-action: manipulation; }
+    .image-viewer-image { display: block; width: 100%; height: 100%; margin: 0; object-fit: contain; -webkit-user-drag: none; }
 
     @media (max-width: 600px), (max-height: 600px) and (pointer: coarse) {
       .header-inner, .page-footer { width: min(1040px, calc(100% - 24px)); }
@@ -746,8 +736,6 @@
       .solved-state { padding-inline: 8px; gap: 6px; font-size: 18px; letter-spacing: .02em; }
       .solved-state::before { width: 20px; height: 20px; font-size: 14px; }
       .answer-form { padding: 14px 10px 12px; }
-      .question-image-zoom { display: flex; align-items: center; justify-content: center; min-height: 44px; margin: 0 auto 8px; padding: 6px 14px; border: 1px solid #b7c3bb; border-radius: 6px; color: #386e66; background: #e7efea; font-size: 15px; line-height: 1.5; cursor: pointer; }
-      #question-image[hidden] ~ .question-image-zoom { display: none; }
       .inline-hints { padding: 16px 10px; }
       .inline-hints h3 { margin-bottom: 12px; font-size: 16px; }
       .inline-hint-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
@@ -761,11 +749,6 @@
       .answer-result { font-size: 16px; }
       .question-card, .notice { margin-bottom: 22px; }
       .page-footer { margin-top: 26px; font-size: 15px; letter-spacing: 0; }
-      .image-viewer-header { padding: 10px 12px; }
-      .image-viewer-header h2 { font-size: 18px; }
-      .image-viewer-tools button { font-size: 18px; }
-      .image-viewer-tools output { font-size: 16px; }
-      .image-viewer-tools #image-viewer-fit { font-size: 14px; }
       .image-keyboard { display: flex; flex-direction: column; gap: 8px; width: 100%; max-width: var(--answer-panel-width); aspect-ratio: auto; background: none; }
       .panel-background { display: none; }
       #answer { position: static; width: 100%; height: auto; min-height: 44px; padding: 8px 10px; border-radius: 6px; font-size: 16px; line-height: 1.5; scroll-margin-top: 90px; }
@@ -925,7 +908,6 @@
         <p id="image-error" class="image-error" hidden>
           問題画像を読み込めませんでした。<br>ページを再読み込みしてください。
         </p>
-        <button id="question-image-zoom" class="question-image-zoom" type="button">画像を拡大</button>
 
         <p id="tutorial-answer-guide" class="tutorial-answer-guide" hidden>例題の答えは「すいせい」です。下のパネルで<strong>すいせい</strong>と入力し、<strong>Enter</strong>を押してみましょう。</p>
 
@@ -948,9 +930,9 @@
             <details id="hint-1" class="inline-hint">
               <summary><span id="hint-1-action">ヒント1を見る</span></summary>
               <div class="inline-hint-content">
-                <button id="hint-1-preview" class="hint-image-preview" type="button" aria-label="ヒント1の画像を拡大">
+                <button id="hint-1-preview" class="hint-image-preview" type="button" aria-label="ヒント1の画像を全画面で表示">
                   <img id="hint-1-image" class="inline-hint-image" alt="">
-                  <span class="hint-image-preview-caption">画像を拡大</span>
+                  <span class="hint-image-preview-caption">全画面で見る</span>
                 </button>
                 <p id="hint-1-error" class="hint-error" role="status" hidden>
                   ヒント画像を読み込めませんでした。
@@ -960,9 +942,9 @@
             <details id="hint-2" class="inline-hint">
               <summary><span id="hint-2-action">ヒント2を見る</span></summary>
               <div class="inline-hint-content">
-                <button id="hint-2-preview" class="hint-image-preview" type="button" aria-label="ヒント2の画像を拡大">
+                <button id="hint-2-preview" class="hint-image-preview" type="button" aria-label="ヒント2の画像を全画面で表示">
                   <img id="hint-2-image" class="inline-hint-image" alt="">
-                  <span class="hint-image-preview-caption">画像を拡大</span>
+                  <span class="hint-image-preview-caption">全画面で見る</span>
                 </button>
                 <p id="hint-2-error" class="hint-error" role="status" hidden>
                   ヒント画像を読み込めませんでした。
@@ -972,9 +954,9 @@
             <details id="hint-3" class="inline-hint" hidden>
               <summary><span id="hint-3-action">ヒント3を見る</span></summary>
               <div class="inline-hint-content">
-                <button id="hint-3-preview" class="hint-image-preview" type="button" aria-label="ヒント3の画像を拡大">
+                <button id="hint-3-preview" class="hint-image-preview" type="button" aria-label="ヒント3の画像を全画面で表示">
                   <img id="hint-3-image" class="inline-hint-image" alt="">
-                  <span class="hint-image-preview-caption">画像を拡大</span>
+                  <span class="hint-image-preview-caption">全画面で見る</span>
                 </button>
                 <p id="hint-3-error" class="hint-error" role="status" hidden>
                   ヒント画像を読み込めませんでした。
@@ -984,9 +966,9 @@
             <details id="hint-4" class="inline-hint" hidden>
               <summary><span id="hint-4-action">ヒント4を見る</span></summary>
               <div class="inline-hint-content">
-                <button id="hint-4-preview" class="hint-image-preview" type="button" aria-label="ヒント4の画像を拡大">
+                <button id="hint-4-preview" class="hint-image-preview" type="button" aria-label="ヒント4の画像を全画面で表示">
                   <img id="hint-4-image" class="inline-hint-image" alt="">
-                  <span class="hint-image-preview-caption">画像を拡大</span>
+                  <span class="hint-image-preview-caption">全画面で見る</span>
                 </button>
                 <p id="hint-4-error" class="hint-error" role="status" hidden>
                   ヒント画像を読み込めませんでした。
@@ -996,9 +978,9 @@
             <details id="hint-5" class="inline-hint" hidden>
               <summary><span id="hint-5-action">ヒント5を見る</span></summary>
               <div class="inline-hint-content">
-                <button id="hint-5-preview" class="hint-image-preview" type="button" aria-label="ヒント5の画像を拡大">
+                <button id="hint-5-preview" class="hint-image-preview" type="button" aria-label="ヒント5の画像を全画面で表示">
                   <img id="hint-5-image" class="inline-hint-image" alt="">
-                  <span class="hint-image-preview-caption">画像を拡大</span>
+                  <span class="hint-image-preview-caption">全画面で見る</span>
                 </button>
                 <p id="hint-5-error" class="hint-error" role="status" hidden>
                   ヒント画像を読み込めませんでした。
@@ -1069,19 +1051,9 @@
   </main>
 
   <dialog id="image-viewer" class="image-viewer" aria-labelledby="image-viewer-title">
-    <div class="image-viewer-header">
-      <h2 id="image-viewer-title">画像を拡大</h2>
-      <button id="image-viewer-close" class="dialog-button" type="button" autofocus>閉じる</button>
-    </div>
-    <div class="image-viewer-tools" role="group" aria-label="画像の倍率">
-      <button id="image-viewer-minus" type="button" aria-label="画像を縮小">−</button>
-      <output id="image-viewer-scale" aria-live="polite">100%</output>
-      <button id="image-viewer-plus" type="button" aria-label="画像を拡大">＋</button>
-      <button id="image-viewer-fit" type="button">全体</button>
-    </div>
-    <div id="image-viewer-body" class="image-viewer-body" tabindex="0" role="region" aria-label="拡大画像。スクロールして見渡せます。">
-      <img id="image-viewer-image" class="image-viewer-image" alt="" draggable="false">
-    </div>
+    <h2 id="image-viewer-title" class="visually-hidden">ヒントの全画面表示</h2>
+    <button id="image-viewer-close" class="dialog-button image-viewer-close" type="button" autofocus>閉じる</button>
+    <img id="image-viewer-image" class="image-viewer-image" alt="" draggable="false">
   </dialog>
 
   <dialog id="restart-dialog" class="restart-dialog" aria-labelledby="restart-title" aria-describedby="restart-description">
@@ -1379,73 +1351,26 @@
 
     const imageViewer = document.getElementById("image-viewer");
     const imageViewerImage = document.getElementById("image-viewer-image");
-    const imageViewerBody = document.getElementById("image-viewer-body");
-    const imageViewerScale = document.getElementById("image-viewer-scale");
-    const imageViewerMinus = document.getElementById("image-viewer-minus");
-    const imageViewerPlus = document.getElementById("image-viewer-plus");
-    let imageViewerZoom = 1;
-    let imageViewerRatio = 1;
     let imageViewerOpener = null;
 
-    function updateImageViewer(zoom = imageViewerZoom, reset = false) {
-      if (!imageViewer.open) return;
-      const width = imageViewerBody.clientWidth;
-      const height = imageViewerBody.clientHeight;
-      if (!width || !height) return;
-      const oldWidth = imageViewerImage.getBoundingClientRect().width;
-      const oldHeight = oldWidth / imageViewerRatio;
-      const x = oldWidth > width ? (imageViewerBody.scrollLeft + width / 2) / oldWidth : .5;
-      const y = oldHeight > height ? (imageViewerBody.scrollTop + height / 2) / oldHeight : .5;
-      imageViewerZoom = Math.max(1, Math.min(3, zoom));
-      const imageWidth = Math.min(width, height * imageViewerRatio) * imageViewerZoom;
-      imageViewerImage.style.width = imageWidth + "px";
-      imageViewerScale.textContent = Math.round(imageViewerZoom * 100) + "%";
-      imageViewerMinus.disabled = imageViewerZoom <= 1;
-      imageViewerPlus.disabled = imageViewerZoom >= 3;
-      imageViewerBody.scrollLeft = reset ? 0 : Math.max(0, imageWidth * x - width / 2);
-      imageViewerBody.scrollTop = reset ? 0 : Math.max(0, imageWidth / imageViewerRatio * y - height / 2);
-    }
-
-    function openImageViewer(source, title, opener = source) {
+    function openHintViewer(source, title, opener = source) {
       if (!source.complete || !source.naturalWidth || !source.naturalHeight) return;
       setQuestionNavigationOpen(false);
       imageViewerOpener = opener;
-      imageViewerRatio = source.naturalWidth / source.naturalHeight;
-      imageViewerZoom = 1;
-      imageViewerImage.width = source.naturalWidth;
-      imageViewerImage.height = source.naturalHeight;
       imageViewerImage.src = source.currentSrc || source.src;
       imageViewerImage.alt = source.alt;
       document.getElementById("image-viewer-title").textContent = title;
       if (!imageViewer.open) imageViewer.showModal();
-      updateImageViewer(1, true);
+      document.body.classList.add("is-hint-viewer-open");
     }
 
-    imageViewerMinus.addEventListener("click", () => updateImageViewer(imageViewerZoom - .5));
-    imageViewerPlus.addEventListener("click", () => updateImageViewer(imageViewerZoom + .5));
-    document.getElementById("image-viewer-fit").addEventListener("click", () => updateImageViewer(1, true));
     document.getElementById("image-viewer-close").addEventListener("click", () => imageViewer.close());
     imageViewer.addEventListener("close", function() {
+      document.body.classList.remove("is-hint-viewer-open");
       imageViewerImage.removeAttribute("src");
+      imageViewerImage.alt = "";
       if (imageViewerOpener && imageViewerOpener.isConnected) imageViewerOpener.focus({ preventScroll: true });
       imageViewerOpener = null;
-    });
-    imageViewer.addEventListener("click", function(event) {
-      if (event.target !== imageViewer) return;
-      const rect = imageViewer.getBoundingClientRect();
-      if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) imageViewer.close();
-    });
-    window.addEventListener("resize", () => updateImageViewer());
-    const questionImageZoom = document.getElementById("question-image-zoom");
-    questionImageZoom.addEventListener("click", () => openImageViewer(questionImage, getQuestionTitle(currentQuestion), questionImageZoom));
-    questionImage.setAttribute("role", "button");
-    questionImage.setAttribute("aria-label", "問題画像を拡大");
-    questionImage.tabIndex = 0;
-    questionImage.addEventListener("click", () => openImageViewer(questionImage, getQuestionTitle(currentQuestion)));
-    questionImage.addEventListener("keydown", function(event) {
-      if (event.key !== "Enter" && event.key !== " ") return;
-      event.preventDefault();
-      openImageViewer(questionImage, getQuestionTitle(currentQuestion));
     });
 
     const portableLayer = document.getElementById("portable-images");
@@ -2097,7 +2022,7 @@
       const image = document.getElementById("hint-" + level + "-image");
       const error = document.getElementById("hint-" + level + "-error");
       const preview = document.getElementById("hint-" + level + "-preview");
-      preview.addEventListener("click", () => openImageViewer(image, getQuestionTitle(currentQuestion) + "のヒント" + level, preview));
+      preview.addEventListener("click", () => openHintViewer(image, getQuestionTitle(currentQuestion) + "のヒント" + level, preview));
 
       details.addEventListener("toggle", function() {
         document.getElementById("hint-" + level + "-action").textContent =
