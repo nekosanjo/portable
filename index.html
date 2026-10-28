@@ -369,9 +369,9 @@
     .portable-source { cursor: grab; user-select: none; -webkit-user-drag: none; touch-action: pan-y pinch-zoom; }
     .portable-source:focus-visible { outline: 3px solid var(--teal); outline-offset: -4px; }
     .portable-images { position: fixed; inset: 0; z-index: 20; pointer-events: none; }
-    .portable-card { position: absolute; width: 280px; max-width: calc(100vw - 24px); border: 2px solid var(--ink); background: var(--paper); box-shadow: 4px 6px 0 #2f394933; pointer-events: auto; cursor: grab; user-select: none; touch-action: none; }
+    .portable-card { position: absolute; width: clamp(320px, 24vw, 400px); max-width: calc(100vw - 24px); border: 2px solid var(--ink); background: var(--paper); box-shadow: 4px 6px 0 #2f394933; pointer-events: auto; cursor: grab; user-select: none; touch-action: none; }
     .portable-card:focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
-    .portable-card-image { display: block; width: 100%; height: auto; max-height: min(360px, calc(100dvh - 24px)); object-fit: contain; -webkit-user-drag: none; }
+    .portable-card-image { display: block; width: 100%; height: auto; max-height: min(480px, calc(100dvh - 24px)); object-fit: contain; -webkit-user-drag: none; }
     .is-portable-dragging, .is-portable-dragging * { cursor: grabbing !important; user-select: none !important; }
 
     .answer-form {
@@ -725,6 +725,7 @@
       .clear-tweet { padding: 10px 8px; font-size: 16px; }
       .clear-extra summary { min-height: calc(3em + 24px); padding: 12px 10px; font-size: 18px; }
       .portable-card { width: 190px; }
+      .portable-card-image { max-height: min(360px, calc(100dvh - 24px)); }
       .restart-dialog { padding: 18px; }
       .restart-dialog h2 { font-size: 20px; }
       .restart-dialog p { font-size: 16px; }
@@ -1138,8 +1139,8 @@
       const paths = [];
       if (number < answerChecks.length) {
         paths.push("Images/N" + number + "." + imageExtension);
-        if (number < 18) {
-          paths.push("Images/N" + number + "A." + imageExtension);
+        paths.push("Images/N" + number + "A." + imageExtension);
+        if (number + 1 < answerChecks.length) {
           paths.push("Images/N" + (number + 1) + "." + imageExtension);
         }
       }
@@ -1156,7 +1157,7 @@
       }
       for (let number = 0; number < answerChecks.length; number++) {
         add("Images/N" + number + "." + imageExtension);
-        if (number < 18) add("Images/N" + number + "A." + imageExtension);
+        add("Images/N" + number + "A." + imageExtension);
       }
       const first = questionImagePaths(currentQuestion).map(path => new URL(path, document.baseURI).href);
       return Array.from(new Set([...first.filter(path => paths.has(path)), ...paths]));
@@ -1634,7 +1635,7 @@
       solvedQuestions.after(normalClear);
       tutorialSolved.replaceChildren();
       solvedQuestions.replaceChildren();
-      for (let number = 0; number < Math.min(currentQuestion, 18); number++) {
+      for (let number = 0; number < Math.min(currentQuestion, answerChecks.length); number++) {
         appendSolvedQuestion(number);
       }
       game.hidden = currentQuestion >= answerChecks.length;
@@ -1760,7 +1761,7 @@
 
       for (let number = 0; number <= Math.min(currentQuestion, answerChecks.length - 1); number++) {
         const solved = number < currentQuestion;
-        const targetId = solved ? (number === 18 ? "clear-screen" : "question-" + number) : "game";
+        const targetId = solved ? "question-" + number : "game";
         const label = number === 0 ? "例題" : number === 17 ? "最終" : number === 18 ? "EX" : String(number);
         const description = getQuestionTitle(number) + (solved ? "（正解済み）へ移動" : "（解答中）へ移動");
         const item = document.createElement("li");
@@ -1790,29 +1791,6 @@
 
     const keyboard = document.getElementById("image-keyboard");
     const panelKeys = document.getElementById("panel-keys");
-    let questionFitFrame = 0;
-
-    function fitCurrentQuestion() {
-      questionFitFrame = 0;
-      if (compactQuestionNavigation.matches) {
-        questionImage.style.removeProperty("max-height");
-        return;
-      }
-      if (game.hidden || questionImage.hidden || !questionImage.naturalWidth) return;
-
-      const card = game.getBoundingClientRect();
-      const image = questionImage.getBoundingClientRect();
-      const panel = keyboard.getBoundingClientRect();
-      const otherHeight = panel.bottom - card.top - image.height;
-      const imageHeight = Math.max(220, Math.floor(window.innerHeight - otherHeight - 32));
-      questionImage.style.maxHeight = imageHeight + "px";
-    }
-
-    function scheduleQuestionFit() {
-      if (!questionFitFrame) questionFitFrame = requestAnimationFrame(fitCurrentQuestion);
-    }
-
-    if (document.fonts) document.fonts.ready.then(scheduleQuestionFit);
     const kanaRows = [
       ["ゃ","ぁ","わ","ら","や","ま","は","な","た","さ","か","あ"],
       ["ゅ","ぃ","を","り","ゆ","み","ひ","に","ち","し","き","い"],
@@ -1944,7 +1922,6 @@
         keyboard.style.setProperty("--panel-control-font", (compact ? Math.min(14, Math.max(10, 20 * scale)) : 20 * scale) + "px");
         keyboard.style.setProperty("--panel-input-font", (compact ? 16 : Math.max(16, 30 * scale)) + "px");
         keyboard.style.setProperty("--panel-radius", (10 * scale) + "px");
-        scheduleQuestionFit();
       }
       if ("ResizeObserver" in window) new ResizeObserver(sizePanel).observe(keyboard);
       window.addEventListener("resize", sizePanel);
@@ -2081,7 +2058,6 @@
     questionImage.addEventListener("load", function() {
       questionImage.hidden = false;
       imageError.hidden = true;
-      scheduleQuestionFit();
     });
 
     function showQuestion() {
@@ -2104,7 +2080,6 @@
       answerInput.removeAttribute("aria-invalid");
       result.textContent = "";
       updateQuestionNavigation();
-      scheduleQuestionFit();
       if (initialImagesReady) warmQuestionImages();
     }
 
@@ -2136,7 +2111,7 @@
       state.textContent = "正解";
 
       const solvedImage = getPreloadedImage("Images/" + name + "A." + imageExtension);
-      solvedImage.className = "question-image";
+      solvedImage.classList.add("question-image");
       solvedImage.alt = title + "の正解後の画像";
       enablePortableImage(solvedImage, number);
 
@@ -2166,21 +2141,19 @@
 
       const position = { left: window.scrollX, top: window.scrollY };
 
-      if (currentQuestion === 18) {
-        resetInlineHints();
-        currentQuestion++;
-        saveProgress();
-        game.hidden = true;
-        clearScreen.hidden = false;
-        updateQuestionNavigation();
-        keepAnswerPosition(clearScreen, position);
-        return;
-      }
-
       const solvedSection = appendSolvedQuestion(currentQuestion);
       currentQuestion++;
       saveProgress();
-      showQuestion();
+
+      if (currentQuestion >= answerChecks.length) {
+        resetInlineHints();
+        game.hidden = true;
+        clearScreen.hidden = false;
+        updateQuestionNavigation();
+      } else {
+        showQuestion();
+      }
+
       keepAnswerPosition(solvedSection, position);
     }
 
